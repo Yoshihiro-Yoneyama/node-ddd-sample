@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "outDir": "build",
+    "target": "es2019",
+    "module": "commonjs",
+    "rootDir": "src",
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "lib": ["es2020"],
+    "paths": {
+      "types": ["src"]
+    }
+  },
+  "include": ["/**/*.ts"],
+  "exclude": ["node_modules"]
+}
