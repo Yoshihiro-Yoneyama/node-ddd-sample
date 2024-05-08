@@ -178,7 +178,7 @@ const dataProvider = [
 		actual: 9,
 	},
 ];
-assert(dataProvider.every(({input, actual}) => test(input) === actual)
+assert(dataProvider.every(({input, actual}) => test(input) === actual))
 ```
 
 
