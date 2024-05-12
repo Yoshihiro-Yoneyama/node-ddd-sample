@@ -71,7 +71,7 @@ export enum DeliveryTo {
 }
 
 export type ProductPrice = Brand<number, 'ProductPrice'>;
-function ProductPrice(value: number): ProductPrice {
+export function ProductPrice(value: number): ProductPrice {
   if (value <= 0 || value >= 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
