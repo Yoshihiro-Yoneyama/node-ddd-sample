@@ -3,14 +3,17 @@ import {
   createOrderedProduct,
   createProduct,
   DeliveryMethod,
-  DeliveryTo, IsOralProduct, OrderedProducts, Product, ProductPrice,
+  DeliveryTo,
+  IsOralProduct,
+  ProductPrice,
   ProductType,
   ServiceType
 } from "../domain/product/product";
 import {translateToUnclassifiedTaxRateProduct} from "../domain/taxable-product/unclassified-taxable-product";
 import {
   classifyToTaxableProduct,
-  createTaxableProductAndTaxRate, TaxableProductAndTaxRate
+  createTaxableProductAndTaxRate,
+  TaxableProductAndTaxRate
 } from "../domain/taxable-product/classified-taxable-product";
 import {checkIsEligibleForDiscount} from "../domain/discount/discount-rule";
 

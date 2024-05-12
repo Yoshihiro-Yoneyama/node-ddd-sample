@@ -1,4 +1,4 @@
-import {TaxableProduct, TaxableProductAndTaxRate} from "../taxable-product/classified-taxable-product";
+import {TaxableProduct} from "../taxable-product/classified-taxable-product";
 import {Brand} from "../../lib/brand";
 
 const DISCOUNT_RATE = 0.9;

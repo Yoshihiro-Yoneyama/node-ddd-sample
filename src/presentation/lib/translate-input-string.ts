@@ -1,5 +1,4 @@
 import {WorkflowInputs} from "../../workflow/derive-sum-price-workflow-input";
-import * as console from "node:console";
 
 export enum ProductCode {
   Book = "B",
