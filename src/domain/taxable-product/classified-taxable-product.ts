@@ -2,6 +2,70 @@ import {Brand} from "../../lib/brand";
 import {UnClassifiedProduct} from "./unclassified-taxable-product";
 import {DeliveryMethod, DeliveryTo, Product, ProductType, ServiceType} from "../product/product";
 
+export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
+
+// 税率別の商品の型
+export type TaxableProduct =
+  | FoodAndBeverage
+  | Newspaper
+  | ReducedTaxRateIntegratedAsset
+  | StandardTaxRateIntegratedAsset
+  | Other;
+
+export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
+export function TaxableProductPrice(value: number): TaxableProductPrice {
+  if (value <= 0 || value >= 99999) {
+    throw new Error("金額は0〜99999の整数で入力してください。")
+  }
+  return value as TaxableProductPrice;
+}
+
+export enum TaxableProductType {
+  FoodAndBeverage = "FoodAndBeverage",
+  Newspaper = "Newspaper",
+  ReducedTaxRateIntegratedAsset = "ReducedTaxRateIntegratedAsset",
+  StandardTaxRateIntegratedAsset = "StandardTaxRateIntegratedAsset",
+  Other = "Other",
+}
+
+export type FoodAndBeverage = {
+  type: TaxableProductType.FoodAndBeverage,
+  price: TaxableProductPrice
+}
+
+export type Newspaper = {
+  type: TaxableProductType.Newspaper,
+  price: TaxableProductPrice,
+}
+
+export type ReducedTaxRateIntegratedAsset = {
+  type: TaxableProductType.ReducedTaxRateIntegratedAsset,
+  price: TaxableProductPrice,
+}
+
+export type StandardTaxRateIntegratedAsset = {
+  type: TaxableProductType.StandardTaxRateIntegratedAsset,
+  price: TaxableProductPrice,
+}
+
+export type Other = {
+  type: TaxableProductType.Other,
+  price: TaxableProductPrice,
+}
+
+// 税率の型
+export type TaxRate =
+  | ReducedTaxRate
+  | StandardTaxRate
+
+export type ReducedTaxRate = {
+  taxRate: 1.08,
+}
+
+export type StandardTaxRate = {
+  taxRate: 1.1,
+}
+
 // 税率未分類の商品から税率別の商品へ変換する関数
 export function classifyToTaxableProduct(unClassifyProducts: UnClassifiedProduct[]): TaxableProduct[] {
   return unClassifyProducts.map((unClassifyProduct) => {
@@ -59,75 +123,9 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
   }
 }
 
-export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
-
-// 税率別の商品の型
-export type TaxableProduct =
-  | FoodAndBeverage
-  | Newspaper
-  | ReducedTaxRateIntegratedAsset
-  | StandardTaxRateIntegratedAsset
-  | Other;
-
-
-export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
-
-export function TaxableProductPrice(value: number): TaxableProductPrice {
-  if (value <= 0 || value >= 99999) {
-    throw new Error("金額は0〜99999の整数で入力してください。")
-  }
-  return value as TaxableProductPrice;
-}
-
-export enum TaxableProductType {
-  FoodAndBeverage = "FoodAndBeverage",
-  Newspaper = "Newspaper",
-  ReducedTaxRateIntegratedAsset = "ReducedTaxRateIntegratedAsset",
-  StandardTaxRateIntegratedAsset = "StandardTaxRateIntegratedAsset",
-  Other = "Other",
-}
-
-export interface FoodAndBeverage {
-  type: TaxableProductType.FoodAndBeverage,
-  price: TaxableProductPrice
-}
-
-export interface Newspaper {
-  type: TaxableProductType.Newspaper,
-  price: TaxableProductPrice,
-}
-
-export interface ReducedTaxRateIntegratedAsset {
-  type: TaxableProductType.ReducedTaxRateIntegratedAsset,
-  price: TaxableProductPrice,
-}
-
-export interface StandardTaxRateIntegratedAsset {
-  type: TaxableProductType.StandardTaxRateIntegratedAsset,
-  price: TaxableProductPrice,
-}
-
-export interface Other {
-  type: TaxableProductType.Other,
-  price: TaxableProductPrice,
-}
-
-// 税率の型
-export type TaxRate =
-  | ReducedTaxRate
-  | StandardTaxRate
-
-export type ReducedTaxRate = {
-  taxRate: 1.08,
-}
-
-export type StandardTaxRate = {
-  taxRate: 1.1,
-}
-
 function isFoodAndBeverage(product: Product): boolean {
   // プロダクトが口腔製品であること
-  if (!product.isOralProduct.value) {
+  if (!product.isOralProduct) {
     return false;
   }
 

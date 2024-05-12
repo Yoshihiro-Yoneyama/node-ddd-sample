@@ -21,11 +21,11 @@ export function translateToUnclassifiedTaxRateProduct(orderedProducts: OrderedPr
     if (currentUnClassifiedProduct === null) {
       currentUnClassifiedProduct = product;
     }
-    else if (currentUnClassifiedProduct.isOralProduct.value !== product.isOralProduct.value) {
+    else if (currentUnClassifiedProduct.isOralProduct !== product.isOralProduct) {
       const unClassifiedIntegratedAsset: UnClassifiedIntegratedAsset = {
         type: "UnClassifiedIntegratedAsset",
-        oralProduct: currentUnClassifiedProduct.isOralProduct.value ? currentUnClassifiedProduct : product,
-        nonOralProduct: currentUnClassifiedProduct.isOralProduct.value ? product : currentUnClassifiedProduct,
+        oralProduct: currentUnClassifiedProduct.isOralProduct ? currentUnClassifiedProduct : product,
+        nonOralProduct: currentUnClassifiedProduct.isOralProduct ? product : currentUnClassifiedProduct,
       };
       unClassifiedProducts.push(unClassifiedIntegratedAsset);
       currentUnClassifiedProduct = null;

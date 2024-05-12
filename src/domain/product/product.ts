@@ -3,13 +3,6 @@ import {Brand} from "../../lib/brand";
 export type OrderedProducts = {
   products: Product[],
 }
-export function createOrderedProduct(
-  products: Product[],
-): OrderedProducts {
-  return {
-    products,
-  }
-}
 
 export type Product = {
   productType: ProductType,
@@ -18,23 +11,6 @@ export type Product = {
   deliveryMethod: DeliveryMethod,
   deliveryTo: DeliveryTo,
   price: ProductPrice,
-}
-export function createProduct(
-  productType: ProductType,
-  isOralProduct: IsOralProduct,
-  serviceType: ServiceType,
-  deliveryMethod: DeliveryMethod,
-  deliveryTo: DeliveryTo,
-  price: ProductPrice,
-): Product {
-  return {
-    productType,
-    isOralProduct,
-    serviceType,
-    deliveryMethod,
-    deliveryTo,
-    price,
-  }
 }
 
 export enum ProductType {
@@ -48,8 +24,9 @@ export enum ProductType {
   Food = "Food",
 }
 
-export type IsOralProduct = {
-  value: boolean
+export type IsOralProduct = Brand<boolean, "IsOralProduct">
+export function IsOralProduct(value: boolean): IsOralProduct {
+  return value as IsOralProduct;
 }
 
 export enum ServiceType  {
@@ -70,11 +47,39 @@ export enum DeliveryTo {
   NoPlace = "NoPlace",
 }
 
-export type ProductPrice = Brand<number, 'ProductPrice'>;
+export type ProductPrice = Brand<number, "ProductPrice">;
 export function ProductPrice(value: number): ProductPrice {
   if (value <= 0 || value >= 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as ProductPrice;
 }
+
+export function createOrderedProduct(
+  products: Product[],
+): OrderedProducts {
+  return {
+    products,
+  }
+}
+
+export function createProduct(
+  productType: ProductType,
+  isOralProduct: IsOralProduct,
+  serviceType: ServiceType,
+  deliveryMethod: DeliveryMethod,
+  deliveryTo: DeliveryTo,
+  price: ProductPrice,
+): Product {
+  return {
+    productType,
+    isOralProduct,
+    serviceType,
+    deliveryMethod,
+    deliveryTo,
+    price,
+  }
+}
+
+
 
