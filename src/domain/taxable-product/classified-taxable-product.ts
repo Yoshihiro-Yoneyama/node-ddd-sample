@@ -42,7 +42,7 @@ export function classifyToTaxableProduct(unClassifyProducts: UnClassifiedProduct
 }
 
 //　商品を税率別に分類し、TaxableProductAndTaxRateを返す関数
-export function translateToProductAndRate(taxableProduct: TaxableProduct): TaxableProductAndTaxRate {
+export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): TaxableProductAndTaxRate {
   switch (taxableProduct.type) {
     case TaxableProductType.FoodAndBeverage:
       return [taxableProduct, {taxRate: 1.08}]
