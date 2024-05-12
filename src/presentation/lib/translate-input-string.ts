@@ -95,7 +95,6 @@ export function translateToWorkflowInput(inputString: string): WorkflowInputs {
     const {serviceType, remainder: remainderAfterExtractServiceType} = extractServiceType(remainderAfterExtractProductType);
     const {deliveryMethodType, remainder: remainderAfterExtractDeliveryMethodType} = extractDeliveryMethodType(remainderAfterExtractServiceType)
     const {deliveryToType, remainder: remainderAfterExtractDeliveryToType} = extractDeliveryToType(remainderAfterExtractDeliveryMethodType);
-    console.log(remainderAfterExtractDeliveryToType)
     const price = parseInt(remainderAfterExtractDeliveryToType);
     return {
       productType: productType,
