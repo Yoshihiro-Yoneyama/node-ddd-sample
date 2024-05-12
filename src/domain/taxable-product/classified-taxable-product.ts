@@ -4,7 +4,6 @@ import {DeliveryMethod, DeliveryTo, Product, ProductType, ServiceType} from "../
 
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 
-// 税率別の商品の型
 export type TaxableProduct =
   | FoodAndBeverage
   | Newspaper
@@ -53,7 +52,6 @@ export type Other = {
   price: TaxableProductPrice,
 }
 
-// 税率の型
 export type TaxRate =
   | ReducedTaxRate
   | StandardTaxRate
@@ -124,7 +122,7 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
 }
 
 function isFoodAndBeverage(product: Product): boolean {
-  // プロダクトが口腔製品であること
+  // プロダクトが経口摂取する商品であること
   if (!product.isOralProduct) {
     return false;
   }
@@ -140,9 +138,9 @@ function isFoodAndBeverage(product: Product): boolean {
     return false;
   }
 
-  // 配送方法がケータリングでない、またはケータリングでも看護ホームに配送されないこと
+  // 配送方法がケータリングでない、またはケータリングであっても配送先が有料老人ホームであること
   if (product.deliveryMethod === DeliveryMethod.Catering) {
-    if (product.deliveryTo === DeliveryTo.NursingHome) {
+    if (product.deliveryTo !== DeliveryTo.NursingHome) {
       return false;
     }
   }
