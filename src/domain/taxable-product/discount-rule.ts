@@ -1,4 +1,4 @@
-import {TaxableProduct} from "../taxable-product/classified-taxable-product";
+import {TaxableProduct} from "./classified-taxable-product";
 import {Brand} from "../../lib/brand";
 
 const DISCOUNT_RATE = 0.9;
@@ -9,21 +9,21 @@ export function IsEligibleForDiscount(value: boolean): IsEligibleForDiscount {
 }
 
 export function checkIsEligibleForDiscount(taxableProducts: TaxableProduct[]): IsEligibleForDiscount {
-  let FoodAndBeverageAndNewspaperPrice = 0;
-  let OtherPrice = 0;
+  let foodAndBeverageAndNewspaperPriceTotal = 0;
+  let otherPriceTotal = 0;
   taxableProducts.forEach((taxableProduct) => {
     if (taxableProduct.type === "FoodAndBeverage" || taxableProduct.type === "Newspaper") {
-      FoodAndBeverageAndNewspaperPrice += taxableProduct.price;
+      foodAndBeverageAndNewspaperPriceTotal += taxableProduct.price;
     } else {
-      OtherPrice += taxableProduct.price;
+      otherPriceTotal += taxableProduct.price;
     }
   });
-  return IsEligibleForDiscount(FoodAndBeverageAndNewspaperPrice * 1.5 === OtherPrice);
+  return IsEligibleForDiscount(foodAndBeverageAndNewspaperPriceTotal * 1.5 === otherPriceTotal);
 }
 
-export function discount(sumPrice: number, isEligibleForDiscount: IsEligibleForDiscount): number {
+export function discount(totalWithTax: number, isEligibleForDiscount: IsEligibleForDiscount): number {
   if (isEligibleForDiscount) {
-    return Math.floor(sumPrice * DISCOUNT_RATE);
+    return Math.floor(totalWithTax * DISCOUNT_RATE);
   }
-  return sumPrice;
+  return totalWithTax;
 }
