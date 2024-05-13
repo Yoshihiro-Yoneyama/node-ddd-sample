@@ -1,6 +1,6 @@
 import {Brand} from "../../lib/brand";
 import {UnClassifiedProduct} from "./unclassified-taxable-product";
-import {DeliveryMethod, DeliveryTo, Product, ProductType, ServiceType} from "../product/product";
+import {DeliveryMethod, DeliveryTo, Product, ProductType, ServiceType} from "../ordered-product/ordered-product";
 
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 

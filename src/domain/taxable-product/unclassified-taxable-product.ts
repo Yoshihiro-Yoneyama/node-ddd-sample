@@ -1,4 +1,4 @@
-import {OrderedProducts, Product} from "../product/product";
+import {OrderedProducts, Product} from "../ordered-product/ordered-product";
 
 export type UnClassifiedIntegratedAsset = {
   type: "UnClassifiedIntegratedAsset",

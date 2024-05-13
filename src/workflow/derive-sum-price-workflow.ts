@@ -8,14 +8,15 @@ import {
   ProductPrice,
   ProductType,
   ServiceType
-} from "../domain/product/product";
+} from "../domain/ordered-product/ordered-product";
 import {translateToUnclassifiedTaxRateProduct} from "../domain/taxable-product/unclassified-taxable-product";
 import {
   classifyToTaxableProduct,
   createTaxableProductAndTaxRate,
   TaxableProductAndTaxRate
 } from "../domain/taxable-product/classified-taxable-product";
-import {checkIsEligibleForDiscount} from "../domain/discount/discount-rule";
+import {checkIsEligibleForDiscount, discount} from "../domain/taxable-product/discount-rule";
+import {calculateTotalWithTax} from "../domain/taxable-product/calculate-total-with-tax";
 
 export class DeriveSumPriceWorkflow {
   deriveSumPrice(inputs: WorkflowInputs) {
@@ -38,10 +39,12 @@ export class DeriveSumPriceWorkflow {
     const taxableProductAndTaxRateList: TaxableProductAndTaxRate[] = classifiedProducts
       .map(classifiedProduct => createTaxableProductAndTaxRate(classifiedProduct));
     // TaxableProductAndTaxRateのリストから合計金額を算出する
+    const totalWithTax = calculateTotalWithTax(taxableProductAndTaxRateList);
     // 値引き対象か判定する
     const isEligibleForDiscount = checkIsEligibleForDiscount(classifiedProducts);
     //　値引きルールを適用する
+    const calculateInclusiveTotal = discount(totalWithTax, isEligibleForDiscount);
     //　最終金額を返す
-    return taxableProductAndTaxRateList;
+    return calculateInclusiveTotal
   }
 }
