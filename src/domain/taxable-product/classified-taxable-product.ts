@@ -44,12 +44,12 @@ export type StandardTaxRate = {
 
 export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" &&
-  (unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice) * 1.1 < 10000 &&
-  unclassifiedProduct.oralProductPrice * 2 > unclassifiedProduct.nonOralProductPrice &&
-  unclassifiedProduct.isFoodAndBeverage ?
+  (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
+  unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
+  unclassifiedProduct.oralProduct.isFoodAndBeverage ?
     option.some({
       type: TaxableProductType.ReducedTaxRateIntegratedAsset,
-      price: TaxableProductPrice(unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice)
+      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
     }) :
     option.none
 }
@@ -58,7 +58,7 @@ export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnClassified
   return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" ?
     option.some({
       type: TaxableProductType.StandardTaxRateIntegratedAsset,
-      price: TaxableProductPrice(unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice)
+      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
     }) :
     option.none
 }
