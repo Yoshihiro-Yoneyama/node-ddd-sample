@@ -1,5 +1,6 @@
-import {TaxableProduct} from "./classified-taxable-product";
 import {Brand} from "../../lib/brand";
+import {OrderedProducts, ProductType} from "../ordered-product/ordered-product";
+import {isFoodAndBeverage} from "./unclassified-taxable-product";
 
 const DISCOUNT_RATE = 0.9;
 
@@ -8,14 +9,15 @@ export function IsEligibleForDiscount(value: boolean): IsEligibleForDiscount {
   return value as IsEligibleForDiscount;
 }
 
-export function checkIsEligibleForDiscount(taxableProducts: TaxableProduct[]): IsEligibleForDiscount {
+export function checkIsEligibleForDiscount(orderedProducts: OrderedProducts): IsEligibleForDiscount {
   let foodAndBeverageAndNewspaperPriceTotal = 0;
   let otherPriceTotal = 0;
-  taxableProducts.forEach((taxableProduct) => {
-    if (taxableProduct.type === "FoodAndBeverage" || taxableProduct.type === "Newspaper") {
-      foodAndBeverageAndNewspaperPriceTotal += taxableProduct.price;
+  orderedProducts.forEach(orderedProduct => {
+    const i = isFoodAndBeverage(orderedProduct);
+    if (i || orderedProduct.productType === ProductType.Newspaper) {
+      foodAndBeverageAndNewspaperPriceTotal += orderedProduct.price;
     } else {
-      otherPriceTotal += taxableProduct.price;
+      otherPriceTotal += orderedProduct.price;
     }
   });
   return IsEligibleForDiscount(foodAndBeverageAndNewspaperPriceTotal * 1.5 === otherPriceTotal);
