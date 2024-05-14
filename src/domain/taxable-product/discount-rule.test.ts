@@ -1,6 +1,15 @@
 import {describe, expect, it} from "@jest/globals";
 import {checkIsEligibleForDiscount, discount, IsEligibleForDiscount} from "./discount-rule";
-import {TaxableProduct, TaxableProductPrice, TaxableProductType} from "./classified-taxable-product";
+import {
+  DeliveryMethod,
+  DeliveryTo,
+  IsOralProduct,
+  OrderedProductId,
+  OrderedProducts,
+  ProductPrice,
+  ProductType,
+  ServiceType
+} from "../ordered-product/ordered-product";
 
 describe('Discount Rule Tests', () => {
   describe('IsEligibleForDiscount', () => {
@@ -17,40 +26,43 @@ describe('Discount Rule Tests', () => {
 
   describe('checkIsEligibleForDiscount', () => {
     it('課税商品の一覧が値引き対象だったらIsEligibleForDiscountがTrueのオブジェクトを返却する', () => {
-      const taxableProducts: TaxableProduct[] = [
+      const orderedProducts: OrderedProducts = [
         {
-          type: TaxableProductType.FoodAndBeverage,
-          price: TaxableProductPrice(100)
+          id: OrderedProductId("test"),
+          productType: ProductType.Newspaper,
+          isOralProduct: IsOralProduct(true),
+          serviceType: ServiceType.TakeOut,
+          deliveryMethod: DeliveryMethod.Catering,
+          deliveryTo: DeliveryTo.Apartment,
+          price: ProductPrice(200),
         },
         {
-          type: TaxableProductType.Newspaper,
-          price: TaxableProductPrice(200)
+          id: OrderedProductId("test"),
+          productType: ProductType.Book,
+          isOralProduct: IsOralProduct(false),
+          serviceType: ServiceType.TakeOut,
+          deliveryMethod: DeliveryMethod.Catering,
+          deliveryTo: DeliveryTo.Apartment,
+          price: ProductPrice(300),
         },
-        {
-          type: TaxableProductType.Other,
-          price: TaxableProductPrice(450)
-        }
       ];
-      const actual = checkIsEligibleForDiscount(taxableProducts);
+      const actual = checkIsEligibleForDiscount(orderedProducts);
       expect(actual).toBe(true);
     });
 
     it('課税商品の一覧が値引き対象でなかったらIsEligibleForDiscountがFalseのオブジェクトを返却する', () => {
-      const taxableProducts: TaxableProduct[] = [
+      const orderedProducts: OrderedProducts = [
         {
-          type: TaxableProductType.FoodAndBeverage,
-          price: TaxableProductPrice(100)
-        },
-        {
-          type: TaxableProductType.Newspaper,
-          price: TaxableProductPrice(200)
-        },
-        {
-          type: TaxableProductType.Other,
-          price: TaxableProductPrice(300)
+          id: OrderedProductId("test"),
+          productType: ProductType.Newspaper,
+          isOralProduct: IsOralProduct(true),
+          serviceType: ServiceType.TakeOut,
+          deliveryMethod: DeliveryMethod.Catering,
+          deliveryTo: DeliveryTo.Apartment,
+          price: ProductPrice(200),
         }
       ];
-      const actual = checkIsEligibleForDiscount(taxableProducts);
+      const actual = checkIsEligibleForDiscount(orderedProducts);
       expect(actual).toBe(false);
     });
   });
