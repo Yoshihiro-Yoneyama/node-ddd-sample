@@ -1,8 +1,8 @@
 export type WorkflowInputs = {
-  productType: string,
+  productType: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
   isOralProduct: boolean,
-  serviceType: string,
-  deliveryMethod: string,
-  deliveryTo: string,
+  serviceType: "TakeOut" | "EatIn",
+  deliveryMethod: "Catering" | "Delivery" | "InternetDelivery",
+  deliveryTo: "House" | "NursingHome" | "Apartment" | "NoPlace",
   price: number,
 }[]
