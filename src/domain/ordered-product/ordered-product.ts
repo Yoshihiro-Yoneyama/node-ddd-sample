@@ -1,10 +1,12 @@
 import {Brand} from "../../lib/brand";
+import * as crypto from "node:crypto";
 
 export type OrderedProducts = {
-  products: Product[],
+  products: OrderedProduct[],
 }
 
-export type Product = {
+export type OrderedProduct = {
+  id: OrderedProductId,
   productType: ProductType,
   isOralProduct: IsOralProduct,
   serviceType: ServiceType,
@@ -12,6 +14,16 @@ export type Product = {
   deliveryTo: DeliveryTo,
   price: ProductPrice,
 }
+
+export type OrderedProductId = Brand<string, "OrderedProductId">
+export function OrderedProductId(value: string): OrderedProductId {
+  return value as OrderedProductId;
+}
+export function createOrderedProductId(): OrderedProductId {
+  return OrderedProductId(crypto.randomUUID());
+}
+
+
 
 export enum ProductType {
   Book = "Book",
@@ -56,7 +68,7 @@ export function ProductPrice(value: number): ProductPrice {
 }
 
 export function createOrderedProduct(
-  products: Product[],
+  products: OrderedProduct[],
 ): OrderedProducts {
   return {
     products,
@@ -70,8 +82,9 @@ export function createProduct(
   deliveryMethod: DeliveryMethod,
   deliveryTo: DeliveryTo,
   price: ProductPrice,
-): Product {
+): OrderedProduct {
   return {
+    id: createOrderedProductId(),
     productType,
     isOralProduct,
     serviceType,
