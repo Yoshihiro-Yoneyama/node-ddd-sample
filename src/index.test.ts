@@ -1,4 +1,5 @@
 import {main} from './index';
+import {expect, it} from "@jest/globals";
 
 it.each([
 	[
@@ -17,10 +18,10 @@ it.each([
 		'BTDD200:DTDD400:BTDD200',
 		 868,
 	],
-	[{
-		input: 'BTDD200:DTDD400:BTDD199',
-		actual: 867,
-	}],
+	[
+		'BTDD200:DTDD400:BTDD199',
+		867,
+	],
 	[
 		'DTDD200:BTDD300',
 		 486,
@@ -37,6 +38,6 @@ it.each([
 		'DTDD3:DTDD3:DTDD3',
 		 9,
 	],
-])('注文データが%sの場合、税込合計金額は%s円になる。。', (input, actual) => {
+])('注文データが%sの場合、税込合計金額は%s円になる。', (input, actual) => {
 	expect(main(input)).toBe(actual);
 });
