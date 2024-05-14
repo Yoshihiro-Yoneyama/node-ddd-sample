@@ -1,17 +1,15 @@
 import {Brand} from "../../lib/brand";
 import {UnClassifiedProduct} from "./unclassified-taxable-product";
-import {DeliveryMethod, DeliveryTo, Product, ProductType, ServiceType} from "../ordered-product/ordered-product";
+import {ProductType} from "../ordered-product/ordered-product";
+import {option} from "fp-ts";
+import {Option} from "fp-ts/Option";
+import {pipe} from "fp-ts/function";
+import * as O from 'fp-ts/lib/Option'
 
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 
-export type TaxableProduct =
-  | FoodAndBeverage
-  | Newspaper
-  | ReducedTaxRateIntegratedAsset
-  | StandardTaxRateIntegratedAsset
-  | Other;
-
 export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
+
 export function TaxableProductPrice(value: number): TaxableProductPrice {
   if (value <= 0 || value >= 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
@@ -27,29 +25,9 @@ export enum TaxableProductType {
   Other = "Other",
 }
 
-export type FoodAndBeverage = {
-  type: TaxableProductType.FoodAndBeverage,
+export type TaxableProduct = {
+  type: TaxableProductType,
   price: TaxableProductPrice
-}
-
-export type Newspaper = {
-  type: TaxableProductType.Newspaper,
-  price: TaxableProductPrice,
-}
-
-export type ReducedTaxRateIntegratedAsset = {
-  type: TaxableProductType.ReducedTaxRateIntegratedAsset,
-  price: TaxableProductPrice,
-}
-
-export type StandardTaxRateIntegratedAsset = {
-  type: TaxableProductType.StandardTaxRateIntegratedAsset,
-  price: TaxableProductPrice,
-}
-
-export type Other = {
-  type: TaxableProductType.Other,
-  price: TaxableProductPrice,
 }
 
 export type TaxRate =
@@ -64,43 +42,69 @@ export type StandardTaxRate = {
   taxRate: 1.1,
 }
 
-// 税率未分類の商品から税率別の商品へ変換する関数
-export function classifyToTaxableProduct(unClassifyProducts: UnClassifiedProduct[]): TaxableProduct[] {
-  return unClassifyProducts.map((unClassifyProduct) => {
-    switch (unClassifyProduct.type) {
-      case "UnClassifiedIntegratedAsset":
-        if ((unClassifyProduct.oralProduct.price + unClassifyProduct.nonOralProduct.price) * 1.1 < 10000 &&
-          unClassifyProduct.oralProduct.price < unClassifyProduct.nonOralProduct.price / 2 &&
-          isFoodAndBeverage(unClassifyProduct.oralProduct)) {
-          return {
-            type: TaxableProductType.ReducedTaxRateIntegratedAsset,
-            price: TaxableProductPrice(unClassifyProduct.oralProduct.price + unClassifyProduct.nonOralProduct.price)
-          }
-        } else {
-          return {
-            type: TaxableProductType.StandardTaxRateIntegratedAsset,
-            price: TaxableProductPrice(unClassifyProduct.oralProduct.price + unClassifyProduct.nonOralProduct.price)
-          }
-        }
-      case "UnClassifiedSingleProduct":
-        if (unClassifyProduct.product.productType === ProductType.Newspaper) {
-          return {
-            type: TaxableProductType.Newspaper,
-            price: TaxableProductPrice(unClassifyProduct.product.price)
-          }
-        } else if (isFoodAndBeverage(unClassifyProduct.product)) {
-          return {
-            type: TaxableProductType.FoodAndBeverage,
-            price: TaxableProductPrice(unClassifyProduct.product.price)
-          }
-        } else {
-          return {
-            type: TaxableProductType.Other,
-            price: TaxableProductPrice(unClassifyProduct.product.price)
-          }
-        }
+export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" &&
+  (unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice) * 1.1 < 10000 &&
+  unclassifiedProduct.oralProductPrice * 2 > unclassifiedProduct.nonOralProductPrice &&
+  unclassifiedProduct.isFoodAndBeverage ?
+    option.some({
+      type: TaxableProductType.ReducedTaxRateIntegratedAsset,
+      price: TaxableProductPrice(unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice)
+    }) :
+    option.none
+}
+
+export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" ?
+    option.some({
+      type: TaxableProductType.StandardTaxRateIntegratedAsset,
+      price: TaxableProductPrice(unclassifiedProduct.oralProductPrice + unclassifiedProduct.nonOralProductPrice)
+    }) :
+    option.none
+}
+
+export function newspaper(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
+  unclassifiedProduct.productType === ProductType.Newspaper ?
+    option.some({
+      type: TaxableProductType.Newspaper,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
+    }) :
+    option.none
+}
+
+export function foodAndBeverage(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
+  unclassifiedProduct.isFoodAndBeverage ?
+    option.some({
+      type: TaxableProductType.FoodAndBeverage,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
+    }) :
+    option.none
+}
+
+export function other(unclassifiedProduct: UnClassifiedProduct): TaxableProduct {
+  if (unclassifiedProduct.type === "UnClassifiedSingleProduct") {
+    return {
+      type: TaxableProductType.Other,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
     }
-  });
+  }
+}
+
+// 税率未分類の商品から税率別の商品へ変換する関数
+export function translateToTaxableProduct(unClassifyProducts: UnClassifiedProduct[]): TaxableProduct[] {
+  return unClassifyProducts
+    .flatMap(unClassifyProduct => pipe(
+      reducedTaxRateIntegratedAsset(unClassifyProduct),
+      O.alt(() => standardTaxRateIntegratedAsset(unClassifyProduct)),
+      O.alt(() => newspaper(unClassifyProduct)),
+      O.alt(() => foodAndBeverage(unClassifyProduct)),
+      O.fold(
+        () => [other(unClassifyProduct)],
+        taxableProduct => [taxableProduct]
+      ))
+    )
 }
 
 //　商品を税率別に分類し、TaxableProductAndTaxRateを返す関数
@@ -116,35 +120,5 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
       return [taxableProduct, {taxRate: 1.08}]
     case TaxableProductType.Other:
       return [taxableProduct, {taxRate: 1.1}]
-    default:
-      const _: never = taxableProduct;
   }
-}
-
-function isFoodAndBeverage(product: Product): boolean {
-  // プロダクトが経口摂取する商品であること
-  if (!product.isOralProduct) {
-    return false;
-  }
-
-  // プロダクトタイプが指定のものでないこと
-  const excludedTypes = [ProductType.Alcohol, ProductType.QuasiDrug, ProductType.Medicine];
-  if (excludedTypes.includes(product.productType)) {
-    return false;
-  }
-
-  // サービスタイプがテイクアウトであること
-  if (product.serviceType !== ServiceType.TakeOut) {
-    return false;
-  }
-
-  // 配送方法がケータリングでない、またはケータリングであっても配送先が有料老人ホームであること
-  if (product.deliveryMethod === DeliveryMethod.Catering) {
-    if (product.deliveryTo !== DeliveryTo.NursingHome) {
-      return false;
-    }
-  }
-
-  // すべてのチェックを通過した場合、trueを返す
-  return true;
 }
