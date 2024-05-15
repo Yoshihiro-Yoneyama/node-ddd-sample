@@ -9,8 +9,8 @@ import {
 import {applyDiscountRule} from "../domain/taxable-product/discount-rule";
 import {calculateTotalWithTax} from "../domain/taxable-product/calculate-total-with-tax";
 
-export namespace DeriveSumPriceWorkflow {
-  export function deriveSumPrice(inputs: WorkflowInputs) {
+export namespace DeriveTotalPriceWorkflow {
+  export function deriveTotalPrice(inputs: WorkflowInputs) {
     // inputからOrderを作成する
     const orderedProducts: OrderedProducts = OrderedProducts(
       inputs
@@ -23,7 +23,7 @@ export namespace DeriveSumPriceWorkflow {
           ProductPrice(input.price)
         ))
     );
-    // Orderから税率未分類の商品リストを作成する
+    // 注文商品リストから税率未分類の商品リストを作成する
     const unClassifiedProducts = translateToUnclassifiedProduct(orderedProducts);
     // 税率未分類の商品からTaxableProductのリストを作成する
     const classifiedProducts = translateToTaxableProduct(unClassifiedProducts);

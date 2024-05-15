@@ -1,11 +1,11 @@
 import * as console from "node:console";
 import {translateToWorkflowInput} from "./presentation/lib/translate-input-string";
-import {DeriveSumPriceWorkflow} from "./workflow/derive-total-price-workflow";
+import {DeriveTotalPriceWorkflow} from "./workflow/derive-total-price-workflow";
 
 export const main = (inputString: string) => {
   try {
     const input = translateToWorkflowInput(inputString);
-    return DeriveSumPriceWorkflow.deriveSumPrice(input);
+    return DeriveTotalPriceWorkflow.deriveTotalPrice(input);
   } catch (e) {
     return e.message;
   }
