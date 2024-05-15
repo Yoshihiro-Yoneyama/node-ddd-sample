@@ -15,7 +15,7 @@ import {
 import {option} from "fp-ts";
 import {IsOralProduct, ProductType} from "../ordered-product/ordered-product";
 
-describe('Classified Taxable Product', () => {
+describe('classified Taxable Product', () => {
   describe('TaxableProductPrice', () => {
     it('TaxableProductPriceの0未満の場合エラーを返す', () => {
       expect(() => TaxableProductPrice(-1)).toThrowError("金額は0〜99999の整数で入力してください。");
@@ -32,7 +32,7 @@ describe('Classified Taxable Product', () => {
   describe('reduceTaxableProductPrice', () => {
     it('低減税率対象の一体資産の条件を満たす場合そのオブジェクトを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedIntegratedAsset",
+        type: "UnclassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(101),
           isFoodAndBeverage: IsFoodAndBeverage(true),
@@ -49,7 +49,7 @@ describe('Classified Taxable Product', () => {
     });
     it('低減税率対象の一体資産の条件を満たさない場合noneを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedIntegratedAsset",
+        type: "UnclassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(100),
           isFoodAndBeverage: IsFoodAndBeverage(false),
@@ -65,7 +65,7 @@ describe('Classified Taxable Product', () => {
   describe('standardTaxRateIntegratedAsset', () => {
     it('標準税率対象の一体資産の条件を満たす場合そのオブジェクトを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedIntegratedAsset",
+        type: "UnclassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(100),
           isFoodAndBeverage: IsFoodAndBeverage(false),
@@ -82,7 +82,7 @@ describe('Classified Taxable Product', () => {
     });
     it('標準税率対象の一体資産の条件を満たさない場合noneを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -96,7 +96,7 @@ describe('Classified Taxable Product', () => {
   describe('newspaper', () => {
     it('新聞の場合そのオブジェクトを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -110,7 +110,7 @@ describe('Classified Taxable Product', () => {
     });
     it('新聞でない場合noneを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -124,7 +124,7 @@ describe('Classified Taxable Product', () => {
   describe('foodAndBeverage', () => {
     it('飲食料品の場合そのオブジェクトを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -138,7 +138,7 @@ describe('Classified Taxable Product', () => {
     });
     it('飲食料品でない場合noneを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -152,7 +152,7 @@ describe('Classified Taxable Product', () => {
   describe('Other', () => {
     it('その他の場合そのオブジェクトを返す', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct = {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
         isOralProduct: IsOralProduct(false),
@@ -170,7 +170,7 @@ describe('Classified Taxable Product', () => {
     it('税率未分類の商品リストから税率別の商品リストへ変換する', () => {
       const unclassifiedTaxableProduct: UnclassifiedProduct[] = [
         {
-          type: "UnClassifiedIntegratedAsset",
+          type: "UnclassifiedIntegratedAsset",
           oralProduct: {
             price: OralProductPrice(101),
             isFoodAndBeverage: IsFoodAndBeverage(true),
@@ -180,7 +180,7 @@ describe('Classified Taxable Product', () => {
           }
         },
         {
-          type: "UnClassifiedSingleProduct",
+          type: "UnclassifiedSingleProduct",
           productType: ProductType.Book,
           singleProductPrice: SingleProductPrice(200),
           isOralProduct: IsOralProduct(false),
