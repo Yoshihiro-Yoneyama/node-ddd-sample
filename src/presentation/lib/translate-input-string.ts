@@ -1,4 +1,4 @@
-import {WorkflowInputs} from "../../workflow/derive-sum-price-workflow-input";
+import {WorkflowInputs} from "../../workflow/derive-total-price-workflow-input";
 
 export function translateToWorkflowInput(inputString: string): WorkflowInputs {
   return inputString

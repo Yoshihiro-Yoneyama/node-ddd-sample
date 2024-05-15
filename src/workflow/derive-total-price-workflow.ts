@@ -1,4 +1,4 @@
-import {WorkflowInputs} from "./derive-sum-price-workflow-input";
+import {WorkflowInputs} from "./derive-total-price-workflow-input";
 import {createProduct, IsOralProduct, OrderedProducts, ProductPrice} from "../domain/ordered-product/ordered-product";
 import {translateToUnclassifiedProduct} from "../domain/taxable-product/unclassified-taxable-product";
 import {
