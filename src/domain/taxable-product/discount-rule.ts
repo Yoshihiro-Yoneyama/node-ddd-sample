@@ -1,8 +1,6 @@
 import {OrderedProducts, ProductType} from "../ordered-product/ordered-product";
 import {isFoodAndBeverage} from "./unclassified-taxable-product";
 
-const DISCOUNT_RATE = 0.9;
-
 export function applyDiscountRule(orderedProducts: OrderedProducts): (totalWithTax: number) => number {
   const foodAndBeverageAndNewsPaperTotal = orderedProducts
     .filter(orderedProducts => isFoodAndBeverage(orderedProducts) || orderedProducts.productType === ProductType.Newspaper)
@@ -15,3 +13,5 @@ export function applyDiscountRule(orderedProducts: OrderedProducts): (totalWithT
     ? (totalWithTax: number) => Math.floor(totalWithTax * DISCOUNT_RATE)
     : (totalWithTax: number) => totalWithTax;
 }
+
+const DISCOUNT_RATE = 0.9;
