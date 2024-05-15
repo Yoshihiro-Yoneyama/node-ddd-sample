@@ -3,8 +3,12 @@ import {translateToWorkflowInput} from "./presentation/lib/translate-input-strin
 import {DeriveSumPriceWorkflow} from "./workflow/derive-sum-price-workflow";
 
 export const main = (inputString: string) => {
-  const input = translateToWorkflowInput(inputString);
-  return new DeriveSumPriceWorkflow().deriveSumPrice(input);
+  try {
+    const input = translateToWorkflowInput(inputString);
+    return DeriveSumPriceWorkflow.deriveSumPrice(input);
+  } catch (e) {
+    return e.message;
+  }
 };
 
 process.stdin.resume();
