@@ -1,5 +1,5 @@
 import {Brand} from "../../lib/brand";
-import {UnClassifiedProduct} from "./unclassified-taxable-product";
+import {UnclassifiedProduct} from "./unclassified-taxable-product";
 import {ProductType} from "../ordered-product/ordered-product";
 import {option} from "fp-ts";
 import {Option} from "fp-ts/Option";
@@ -38,8 +38,8 @@ export function TaxableProductPrice(value: number): TaxableProductPrice {
   return value as TaxableProductPrice;
 }
 
-export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnClassifiedIntegratedAsset" &&
+export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnclassifiedIntegratedAsset" &&
     (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
     unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
     unclassifiedProduct.oralProduct.isFoodAndBeverage;
@@ -51,8 +51,8 @@ export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedP
     : option.none
 }
 
-export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset"
+export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedIntegratedAsset"
     ? option.some({
       type: TaxableProductType.StandardTaxRateIntegratedAsset,
       price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
@@ -60,8 +60,8 @@ export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnClassified
     : option.none
 }
 
-export function newspaper(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
+export function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
   unclassifiedProduct.productType === ProductType.Newspaper
     ? option.some({
       type: TaxableProductType.Newspaper,
@@ -70,8 +70,8 @@ export function newspaper(unclassifiedProduct: UnClassifiedProduct): Option<Taxa
     : option.none
 }
 
-export function foodAndBeverage(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
+export function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
   unclassifiedProduct.isFoodAndBeverage
     ? option.some({
       type: TaxableProductType.FoodAndBeverage,
@@ -80,8 +80,8 @@ export function foodAndBeverage(unclassifiedProduct: UnClassifiedProduct): Optio
     : option.none
 }
 
-export function other(unclassifiedProduct: UnClassifiedProduct): TaxableProduct {
-  if (unclassifiedProduct.type === "UnClassifiedSingleProduct") {
+export function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
+  if (unclassifiedProduct.type === "UnclassifiedSingleProduct") {
     return {
       type: TaxableProductType.Other,
       price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
@@ -90,7 +90,7 @@ export function other(unclassifiedProduct: UnClassifiedProduct): TaxableProduct 
 }
 
 // 税率未分類の商品から税率別の商品へ変換する関数
-export function translateToTaxableProduct(unClassifyProducts: UnClassifiedProduct[]): TaxableProduct[] {
+export function translateToTaxableProduct(unClassifyProducts: UnclassifiedProduct[]): TaxableProduct[] {
   return unClassifyProducts
     .flatMap(unClassifiedProduct => pipe(
       reducedTaxRateIntegratedAsset(unClassifiedProduct),

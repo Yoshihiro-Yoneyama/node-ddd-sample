@@ -10,10 +10,10 @@ import {pipe} from 'fp-ts/function'
 import {filter, zip} from 'fp-ts/Array'
 import {option} from "fp-ts";
 
-export type UnClassifiedProduct = UnClassifiedIntegratedAsset | UnClassifiedSingleProduct
+export type UnclassifiedProduct = UnclassifiedIntegratedAsset | UnclassifiedSingleProduct
 
-export type UnClassifiedIntegratedAsset = {
-  type: "UnClassifiedIntegratedAsset",
+export type UnclassifiedIntegratedAsset = {
+  type: "UnclassifiedIntegratedAsset",
   oralProduct: {
     price: OralProductPrice,
     isFoodAndBeverage: IsFoodAndBeverage,
@@ -22,8 +22,8 @@ export type UnClassifiedIntegratedAsset = {
     price: NonOralProductPrice
   },
 }
-export type UnClassifiedSingleProduct = {
-  type: "UnClassifiedSingleProduct",
+export type UnclassifiedSingleProduct = {
+  type: "UnclassifiedSingleProduct",
   productType: ProductType,
   singleProductPrice: SingleProductPrice,
   isOralProduct: IsOralProduct,
@@ -60,7 +60,7 @@ export function SingleProductPrice(value: number): SingleProductPrice {
 }
 
 //一体資産の商品の組を作成する関数
-function f(orderedProducts: OrderedProducts): OrderedProducts[] {
+function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
     orderedProducts,
     zip(orderedProducts.slice(1)),
@@ -69,10 +69,10 @@ function f(orderedProducts: OrderedProducts): OrderedProducts[] {
 }
 
 // 一体資産を作成する関数
-function g(pair: OrderedProducts[]): UnClassifiedIntegratedAsset[] {
+function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
     return {
-      type: "UnClassifiedIntegratedAsset",
+      type: "UnclassifiedIntegratedAsset",
       oralProduct: {
         price: OralProductPrice(a.price),
         isFoodAndBeverage: isFoodAndBeverage(a),
@@ -85,14 +85,14 @@ function g(pair: OrderedProducts[]): UnClassifiedIntegratedAsset[] {
 }
 
 // OrderedProductsから一体資産の組の商品を除外する関数
-function h(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnClassifiedSingleProduct[] {
+function createUnclassifiedSingleProduct(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
   const flat = productsForIntegratedAsset.flat();
   //idでの同一性チェック
   return orderedProducts
     .filter(product => !flat.some(b => product.id === b.id))
     .map((product) => {
       return {
-        type: "UnClassifiedSingleProduct",
+        type: "UnclassifiedSingleProduct",
         productType: product.productType,
         singleProductPrice: SingleProductPrice(product.price),
         isOralProduct: IsOralProduct(product.isOralProduct),
@@ -102,10 +102,10 @@ function h(orderedProducts: OrderedProducts, productsForIntegratedAsset: Ordered
 }
 
 // 注文内容から税率未分類の商品を作成する関数
-export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnClassifiedProduct[] {
-  const pairs = f(orderedProducts);
-  const integratedAssets = g(pairs);
-  const singles = h(orderedProducts, pairs);
+export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
+  const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);
+  const integratedAssets = createUnclassifiedIntegratedAsset(pairs);
+  const singles = createUnclassifiedSingleProduct(orderedProducts, pairs);
   return [...integratedAssets, ...singles];
 }
 

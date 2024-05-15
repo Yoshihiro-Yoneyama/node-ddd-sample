@@ -10,7 +10,7 @@ import {
   IsFoodAndBeverage,
   NonOralProductPrice,
   OralProductPrice, SingleProductPrice,
-  UnClassifiedProduct
+  UnclassifiedProduct
 } from "./unclassified-taxable-product";
 import {option} from "fp-ts";
 import {IsOralProduct, ProductType} from "../ordered-product/ordered-product";
@@ -31,7 +31,7 @@ describe('Classified Taxable Product', () => {
 
   describe('reduceTaxableProductPrice', () => {
     it('低減税率対象の一体資産の条件を満たす場合そのオブジェクトを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(101),
@@ -48,7 +48,7 @@ describe('Classified Taxable Product', () => {
       }));
     });
     it('低減税率対象の一体資産の条件を満たさない場合noneを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(100),
@@ -64,7 +64,7 @@ describe('Classified Taxable Product', () => {
   });
   describe('standardTaxRateIntegratedAsset', () => {
     it('標準税率対象の一体資産の条件を満たす場合そのオブジェクトを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedIntegratedAsset",
         oralProduct: {
           price: OralProductPrice(100),
@@ -81,7 +81,7 @@ describe('Classified Taxable Product', () => {
       }));
     });
     it('標準税率対象の一体資産の条件を満たさない場合noneを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
@@ -95,7 +95,7 @@ describe('Classified Taxable Product', () => {
 
   describe('newspaper', () => {
     it('新聞の場合そのオブジェクトを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
@@ -109,7 +109,7 @@ describe('Classified Taxable Product', () => {
       }));
     });
     it('新聞でない場合noneを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
@@ -123,7 +123,7 @@ describe('Classified Taxable Product', () => {
 
   describe('foodAndBeverage', () => {
     it('飲食料品の場合そのオブジェクトを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Newspaper,
         singleProductPrice: SingleProductPrice(200),
@@ -137,7 +137,7 @@ describe('Classified Taxable Product', () => {
       }));
     });
     it('飲食料品でない場合noneを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
@@ -151,7 +151,7 @@ describe('Classified Taxable Product', () => {
 
   describe('Other', () => {
     it('その他の場合そのオブジェクトを返す', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct = {
+      const unclassifiedTaxableProduct: UnclassifiedProduct = {
         type: "UnClassifiedSingleProduct",
         productType: ProductType.Book,
         singleProductPrice: SingleProductPrice(200),
@@ -168,7 +168,7 @@ describe('Classified Taxable Product', () => {
 
   describe('translateToTaxableProduct', () => {
     it('税率未分類の商品リストから税率別の商品リストへ変換する', () => {
-      const unclassifiedTaxableProduct: UnClassifiedProduct[] = [
+      const unclassifiedTaxableProduct: UnclassifiedProduct[] = [
         {
           type: "UnClassifiedIntegratedAsset",
           oralProduct: {
