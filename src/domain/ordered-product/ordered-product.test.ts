@@ -1,6 +1,7 @@
 import {describe, expect, it, jest} from "@jest/globals";
 import {
-  DeliveryMethod,
+  createOrderedProductId, createProduct,
+  DeliveryMethod, DeliveryTo,
   IsOralProduct,
   OrderedProductId,
   OrderedProducts,
@@ -8,6 +9,8 @@ import {
   ProductType,
   ServiceType
 } from "./ordered-product";
+import { randomUUID } from 'crypto';
+import * as crypto from "node:crypto";
 
 describe('Ordered Product Tests', () => {
   describe('OrderedProduct', () => {
@@ -63,6 +66,12 @@ describe('Ordered Product Tests', () => {
     });
   });
 
+  describe('createOrderedProductId', () => {
+    it('createOrderedProductIdを生成する', () => {
+      const actual = createOrderedProductId();
+      expect(actual).toBeTruthy()
+    });
+  });
 
   describe('ProductType', () => {
     it('ProductTypeを生成する', () => {
@@ -81,6 +90,20 @@ describe('Ordered Product Tests', () => {
     });
     it('ProductPriceが99999以上の場合エラーを返す', () => {
       expect(() => ProductPrice(100000)).toThrowError("金額は0〜99999の整数で入力してください。");
+    });
+  });
+
+  describe('createProduct', () => {
+    it('createProductを生成する', () => {
+      const actual = createProduct(
+        ProductType.Newspaper,
+        IsOralProduct(false),
+        ServiceType.TakeOut,
+        DeliveryMethod.Catering,
+        DeliveryTo.Apartment,
+        ProductPrice(1000),
+      );
+      expect(actual).toBeTruthy()
     });
   });
 });
