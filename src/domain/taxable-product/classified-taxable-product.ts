@@ -8,7 +8,6 @@ import {pipe} from "fp-ts/function";
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 
 export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
-
 export function TaxableProductPrice(value: number): TaxableProductPrice {
   if (value <= 0 || value >= 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
@@ -42,44 +41,45 @@ export type StandardTaxRate = {
 }
 
 export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" &&
-  (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
-  unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
-  unclassifiedProduct.oralProduct.isFoodAndBeverage ?
-    option.some({
+  const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnClassifiedIntegratedAsset" &&
+    (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
+    unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
+    unclassifiedProduct.oralProduct.isFoodAndBeverage;
+  return isReducedTaxRateIntegratedAsset
+    ? option.some({
       type: TaxableProductType.ReducedTaxRateIntegratedAsset,
       price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
-    }) :
-    option.none
+    })
+    : option.none
 }
 
 export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset" ?
-    option.some({
+  return unclassifiedProduct.type === "UnClassifiedIntegratedAsset"
+    ? option.some({
       type: TaxableProductType.StandardTaxRateIntegratedAsset,
       price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
-    }) :
-    option.none
+    })
+    : option.none
 }
 
 export function newspaper(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
-  unclassifiedProduct.productType === ProductType.Newspaper ?
-    option.some({
+  unclassifiedProduct.productType === ProductType.Newspaper
+    ? option.some({
       type: TaxableProductType.Newspaper,
       price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
-    }) :
-    option.none
+    })
+    : option.none
 }
 
 export function foodAndBeverage(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnClassifiedSingleProduct" &&
-  unclassifiedProduct.isFoodAndBeverage ?
-    option.some({
+  unclassifiedProduct.isFoodAndBeverage
+    ? option.some({
       type: TaxableProductType.FoodAndBeverage,
       price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
-    }) :
-    option.none
+    })
+    : option.none
 }
 
 export function other(unclassifiedProduct: UnClassifiedProduct): TaxableProduct {
@@ -88,19 +88,19 @@ export function other(unclassifiedProduct: UnClassifiedProduct): TaxableProduct 
       type: TaxableProductType.Other,
       price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
     }
-  }
+  } else throw Error("assertion error");
 }
 
 // 税率未分類の商品から税率別の商品へ変換する関数
 export function translateToTaxableProduct(unClassifyProducts: UnClassifiedProduct[]): TaxableProduct[] {
   return unClassifyProducts
-    .flatMap(unClassifyProduct => pipe(
-      reducedTaxRateIntegratedAsset(unClassifyProduct),
-      option.alt(() => standardTaxRateIntegratedAsset(unClassifyProduct)),
-      option.alt(() => newspaper(unClassifyProduct)),
-      option.alt(() => foodAndBeverage(unClassifyProduct)),
+    .flatMap(unClassifiedProduct => pipe(
+      reducedTaxRateIntegratedAsset(unClassifiedProduct),
+      option.alt(() => standardTaxRateIntegratedAsset(unClassifiedProduct)),
+      option.alt(() => newspaper(unClassifiedProduct)),
+      option.alt(() => foodAndBeverage(unClassifiedProduct)),
       option.fold(
-        () => [other(unClassifyProduct)],
+        () => [other(unClassifiedProduct)],
         taxableProduct => [taxableProduct]
       ))
     )
