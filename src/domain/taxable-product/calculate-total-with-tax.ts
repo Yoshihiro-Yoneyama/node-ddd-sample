@@ -1,9 +1,8 @@
 import {TaxableProductAndTaxRate} from "./classified-taxable-product";
 
 export function calculateTotalWithTax(taxableProductAndTaxRateList: TaxableProductAndTaxRate[]): number {
-  let totalWithTax = 0;
-  for (const [taxableProduct, taxRate] of taxableProductAndTaxRateList) {
-    totalWithTax += Math.round(taxableProduct.price * taxRate.taxRate);
-  }
-  return totalWithTax;
+  return taxableProductAndTaxRateList
+    .reduce((totalWithTax, [taxableProduct, taxRate]) => {
+    return totalWithTax + Math.round(taxableProduct.price * taxRate.taxRate);
+  }, 0);
 }
