@@ -59,6 +59,14 @@ export function SingleProductPrice(value: number): SingleProductPrice {
   return value as SingleProductPrice;
 }
 
+// 注文内容から税率未分類の商品を作成する関数
+export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
+  const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);
+  const integratedAssets = createUnclassifiedIntegratedAsset(pairs);
+  const singles = extractUnclassifiedSingleProduct(orderedProducts, pairs);
+  return [...integratedAssets, ...singles];
+}
+
 //一体資産の商品の組を作成する関数
 function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
@@ -84,8 +92,8 @@ function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): Unclassifie
   });
 }
 
-// OrderedProductsから一体資産の組の商品を除外する関数
-function createUnclassifiedSingleProduct(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
+// 注文した商品リストから一体資産ではない商品のリストを抽出する関数
+function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
   const flat = productsForIntegratedAsset.flat();
   //idでの同一性チェック
   return orderedProducts
@@ -101,14 +109,7 @@ function createUnclassifiedSingleProduct(orderedProducts: OrderedProducts, produ
     });
 }
 
-// 注文内容から税率未分類の商品を作成する関数
-export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
-  const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);
-  const integratedAssets = createUnclassifiedIntegratedAsset(pairs);
-  const singles = createUnclassifiedSingleProduct(orderedProducts, pairs);
-  return [...integratedAssets, ...singles];
-}
-
+// 飲食料品かの判定を行う関数
 export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
   return pipe(
     !product.isOralProduct ? option.some(false) : option.none,
@@ -116,8 +117,8 @@ export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
     option.alt(() => product.serviceType !== ServiceType.TakeOut ? option.some(false) : option.none),
     option.alt(() => product.deliveryMethod === DeliveryMethod.Catering &&
       product.deliveryTo !== DeliveryTo.NursingHome
-      ? option.some(false)
-      : option.none
+        ? option.some(false)
+        : option.none
     ),
     option.map((value) => IsFoodAndBeverage(value)),
     option.getOrElse(() => IsFoodAndBeverage(true))
