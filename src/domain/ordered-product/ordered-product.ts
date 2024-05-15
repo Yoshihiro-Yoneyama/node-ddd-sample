@@ -1,10 +1,6 @@
 import {Brand} from "../../lib/brand";
 import * as crypto from "node:crypto";
 
-export type OrderedProducts = {
-  products: OrderedProduct[],
-}
-
 export type OrderedProduct = {
   id: OrderedProductId,
   productType: ProductType,
@@ -15,6 +11,14 @@ export type OrderedProduct = {
   price: ProductPrice,
 }
 
+export type OrderedProducts = OrderedProduct[];
+export function OrderedProducts(products: OrderedProducts): OrderedProducts {
+  if (products.length === 0 || products.length > 10000) {
+    throw new Error("商品は1〜10000個で入力してください。")
+  }
+  return products;
+}
+
 export type OrderedProductId = Brand<string, "OrderedProductId">
 export function OrderedProductId(value: string): OrderedProductId {
   return value as OrderedProductId;
@@ -23,41 +27,43 @@ export function createOrderedProductId(): OrderedProductId {
   return OrderedProductId(crypto.randomUUID());
 }
 
-
-
-export enum ProductType {
-  Book = "Book",
-  Beverage = "Beverage",
-  Alcohol = "Alcohol",
-  QuasiDrug = "QuasiDrug",
-  Newspaper = "Newspaper",
-  Medicine = "Medicine",
-  Other = "Other",
-  Food = "Food",
-}
+export const ProductType = {
+  Book : "Book",
+  Beverage : "Beverage",
+  Alcohol : "Alcohol",
+  QuasiDrug : "QuasiDrug",
+  Newspaper : "Newspaper",
+  Medicine : "Medicine",
+  Other : "Other",
+  Food : "Food",
+} as const;
+export type ProductType = typeof ProductType[keyof typeof ProductType];
 
 export type IsOralProduct = Brand<boolean, "IsOralProduct">
 export function IsOralProduct(value: boolean): IsOralProduct {
   return value as IsOralProduct;
 }
 
-export enum ServiceType  {
-  TakeOut = "TakeOut",
-  EatIn = "EatIn",
-}
+export const ServiceType = {
+  TakeOut : "TakeOut",
+  EatIn : "EatIn",
+} as const;
+export type ServiceType = typeof ServiceType[keyof typeof ServiceType];
 
-export enum DeliveryMethod {
-  Catering = "Catering",
-  Delivery = "Delivery",
-  InternetDelivery = "InternetDelivery",
-}
+export const DeliveryMethod = {
+  Catering : "Catering",
+  Delivery : "Delivery",
+  InternetDelivery : "InternetDelivery",
+} as const;
+export type DeliveryMethod = typeof DeliveryMethod[keyof typeof DeliveryMethod];
 
-export enum DeliveryTo {
-  House = "House",
-  NursingHome = "NursingHome",
-  Apartment = "Apartment",
-  NoPlace = "NoPlace",
-}
+export const DeliveryTo = {
+  House : "House",
+  NursingHome : "NursingHome",
+  Apartment : "Apartment",
+  NoPlace : "NoPlace",
+} as const;
+export type DeliveryTo = typeof DeliveryTo[keyof typeof DeliveryTo];
 
 export type ProductPrice = Brand<number, "ProductPrice">;
 export function ProductPrice(value: number): ProductPrice {
@@ -65,14 +71,6 @@ export function ProductPrice(value: number): ProductPrice {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as ProductPrice;
-}
-
-export function createOrderedProduct(
-  products: OrderedProduct[],
-): OrderedProducts {
-  return {
-    products,
-  }
 }
 
 export function createProduct(
