@@ -8,6 +8,9 @@ import {
 import {Brand} from "../../lib/brand";
 import {pipe} from 'fp-ts/function'
 import {filter, zip} from 'fp-ts/Array'
+import {option} from "fp-ts";
+
+export type UnClassifiedProduct = UnClassifiedIntegratedAsset | UnClassifiedSingleProduct
 
 export type UnClassifiedIntegratedAsset = {
   type: "UnClassifiedIntegratedAsset",
@@ -56,10 +59,8 @@ export function SingleProductPrice(value: number): SingleProductPrice {
   return value as SingleProductPrice;
 }
 
-export type UnClassifiedProduct = UnClassifiedIntegratedAsset | UnClassifiedSingleProduct
-
 //一体資産の商品の組を作成する関数
-export function f(orderedProducts: OrderedProducts): OrderedProducts[] {
+function f(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
     orderedProducts,
     zip(orderedProducts.slice(1)),
@@ -68,7 +69,7 @@ export function f(orderedProducts: OrderedProducts): OrderedProducts[] {
 }
 
 // 一体資産を作成する関数
-export function g(pair: OrderedProducts[]): UnClassifiedIntegratedAsset[] {
+function g(pair: OrderedProducts[]): UnClassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
     return {
       type: "UnClassifiedIntegratedAsset",
@@ -84,7 +85,7 @@ export function g(pair: OrderedProducts[]): UnClassifiedIntegratedAsset[] {
 }
 
 // OrderedProductsから一体資産の組の商品を除外する関数
-export function h(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnClassifiedSingleProduct[] {
+function h(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnClassifiedSingleProduct[] {
   const flat = productsForIntegratedAsset.flat();
   //idでの同一性チェック
   return orderedProducts
@@ -101,7 +102,7 @@ export function h(orderedProducts: OrderedProducts, productsForIntegratedAsset: 
 }
 
 // 注文内容から税率未分類の商品を作成する関数
-export function translateToUnclassifiedTaxRateProduct(orderedProducts: OrderedProducts): UnClassifiedProduct[] {
+export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnClassifiedProduct[] {
   const pairs = f(orderedProducts);
   const integratedAssets = g(pairs);
   const singles = h(orderedProducts, pairs);
@@ -109,29 +110,17 @@ export function translateToUnclassifiedTaxRateProduct(orderedProducts: OrderedPr
 }
 
 export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
-  // プロダクトが経口摂取する商品であること
-  if (!product.isOralProduct) {
-    return IsFoodAndBeverage(false);
-  }
-
-  // プロダクトタイプが指定のものでないこと
-  const excludedTypes: ProductType[] = [ProductType.Alcohol, ProductType.QuasiDrug, ProductType.Medicine];
-  if (excludedTypes.includes(product.productType)) {
-    return IsFoodAndBeverage(false);
-  }
-
-  // サービスタイプがテイクアウトであること
-  if (product.serviceType !== ServiceType.TakeOut) {
-    return IsFoodAndBeverage(false);
-  }
-
-  // 配送方法がケータリングでない、またはケータリングであっても配送先が有料老人ホームであること
-  if (product.deliveryMethod === DeliveryMethod.Catering) {
-    if (product.deliveryTo !== DeliveryTo.NursingHome) {
-      return IsFoodAndBeverage(false);
-    }
-  }
-
-  // すべてのチェックを通過した場合、trueを返す
-  return IsFoodAndBeverage(true);
+  return pipe(
+    !product.isOralProduct ? option.some(false) : option.none,
+    option.alt(() => EXCLUDED_TYPES.includes(product.productType) ? option.some(false) : option.none),
+    option.alt(() => product.serviceType !== ServiceType.TakeOut ? option.some(false) : option.none),
+    option.alt(() => product.deliveryMethod === DeliveryMethod.Catering &&
+      product.deliveryTo !== DeliveryTo.NursingHome
+      ? option.some(false)
+      : option.none
+    ),
+    option.map((value) => IsFoodAndBeverage(value)),
+    option.getOrElse(() => IsFoodAndBeverage(true))
+  )
 }
+const EXCLUDED_TYPES: ProductType[] = [ProductType.Alcohol, ProductType.QuasiDrug, ProductType.Medicine];
