@@ -12,16 +12,6 @@ export type TaxableProduct = {
   price: TaxableProductPrice
 }
 
-export type TaxRate =
-  | ReducedTaxRate
-  | StandardTaxRate
-export type ReducedTaxRate = {
-  taxRate: 1.08,
-}
-export type StandardTaxRate = {
-  taxRate: 1.1,
-}
-
 export enum TaxableProductType {
   FoodAndBeverage = "FoodAndBeverage",
   Newspaper = "Newspaper",
@@ -36,57 +26,6 @@ export function TaxableProductPrice(value: number): TaxableProductPrice {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as TaxableProductPrice;
-}
-
-export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
-  const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnclassifiedIntegratedAsset" &&
-    (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
-    unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
-    unclassifiedProduct.oralProduct.isFoodAndBeverage;
-  return isReducedTaxRateIntegratedAsset
-    ? option.some({
-      type: TaxableProductType.ReducedTaxRateIntegratedAsset,
-      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
-    })
-    : option.none
-}
-
-export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnclassifiedIntegratedAsset"
-    ? option.some({
-      type: TaxableProductType.StandardTaxRateIntegratedAsset,
-      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
-    })
-    : option.none
-}
-
-export function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
-  unclassifiedProduct.productType === ProductType.Newspaper
-    ? option.some({
-      type: TaxableProductType.Newspaper,
-      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
-    })
-    : option.none
-}
-
-export function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
-  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
-  unclassifiedProduct.isFoodAndBeverage
-    ? option.some({
-      type: TaxableProductType.FoodAndBeverage,
-      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
-    })
-    : option.none
-}
-
-export function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
-  if (unclassifiedProduct.type === "UnclassifiedSingleProduct") {
-    return {
-      type: TaxableProductType.Other,
-      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
-    }
-  } else throw Error("assertion error");
 }
 
 // 税率未分類の商品から税率別の商品へ変換する関数
@@ -121,4 +60,65 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
     default:
       const _: never = type;
   }
+}
+
+type TaxRate =
+  | ReducedTaxRate
+  | StandardTaxRate
+type ReducedTaxRate = {
+  taxRate: 1.08,
+}
+type StandardTaxRate = {
+  taxRate: 1.1,
+}
+
+function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnclassifiedIntegratedAsset" &&
+    (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
+    unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
+    unclassifiedProduct.oralProduct.isFoodAndBeverage;
+  return isReducedTaxRateIntegratedAsset
+    ? option.some({
+      type: TaxableProductType.ReducedTaxRateIntegratedAsset,
+      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
+    })
+    : option.none
+}
+
+function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedIntegratedAsset"
+    ? option.some({
+      type: TaxableProductType.StandardTaxRateIntegratedAsset,
+      price: TaxableProductPrice(unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price)
+    })
+    : option.none
+}
+
+function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
+  unclassifiedProduct.productType === ProductType.Newspaper
+    ? option.some({
+      type: TaxableProductType.Newspaper,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
+    })
+    : option.none
+}
+
+function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+  return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
+  unclassifiedProduct.isFoodAndBeverage
+    ? option.some({
+      type: TaxableProductType.FoodAndBeverage,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
+    })
+    : option.none
+}
+
+function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
+  if (unclassifiedProduct.type === "UnclassifiedSingleProduct") {
+    return {
+      type: TaxableProductType.Other,
+      price: TaxableProductPrice(unclassifiedProduct.singleProductPrice)
+    }
+  } else throw Error("assertion error");
 }
