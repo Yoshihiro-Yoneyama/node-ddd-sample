@@ -7,12 +7,19 @@ import {pipe} from "fp-ts/function";
 
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 
-export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
-export function TaxableProductPrice(value: number): TaxableProductPrice {
-  if (value <= 0 || value >= 99999) {
-    throw new Error("金額は0〜99999の整数で入力してください。")
-  }
-  return value as TaxableProductPrice;
+export type TaxableProduct = {
+  type: TaxableProductType,
+  price: TaxableProductPrice
+}
+
+export type TaxRate =
+  | ReducedTaxRate
+  | StandardTaxRate
+export type ReducedTaxRate = {
+  taxRate: 1.08,
+}
+export type StandardTaxRate = {
+  taxRate: 1.1,
 }
 
 export enum TaxableProductType {
@@ -23,21 +30,12 @@ export enum TaxableProductType {
   Other = "Other",
 }
 
-export type TaxableProduct = {
-  type: TaxableProductType,
-  price: TaxableProductPrice
-}
-
-export type TaxRate =
-  | ReducedTaxRate
-  | StandardTaxRate
-
-export type ReducedTaxRate = {
-  taxRate: 1.08,
-}
-
-export type StandardTaxRate = {
-  taxRate: 1.1,
+export type TaxableProductPrice = Brand<number, "TaxableProductPrice">;
+export function TaxableProductPrice(value: number): TaxableProductPrice {
+  if (value < 0 || value > 99999) {
+    throw new Error("金額は0〜99999の整数で入力してください。")
+  }
+  return value as TaxableProductPrice;
 }
 
 export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnClassifiedProduct): Option<TaxableProduct> {
