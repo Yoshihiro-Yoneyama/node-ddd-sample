@@ -1,7 +1,9 @@
-import {describe, expect, it, jest} from "@jest/globals";
+import {describe, expect, it} from "@jest/globals";
 import {
-  createOrderedProductId, createProduct,
-  DeliveryMethod, DeliveryTo,
+  createOrderedProductId,
+  createProduct,
+  DeliveryMethod,
+  DeliveryTo,
   IsOralProduct,
   OrderedProductId,
   OrderedProducts,
@@ -9,8 +11,6 @@ import {
   ProductType,
   ServiceType
 } from "./ordered-product";
-import { randomUUID } from 'crypto';
-import * as crypto from "node:crypto";
 
 describe('Ordered Product Tests', () => {
   describe('OrderedProduct', () => {
