@@ -4,7 +4,6 @@ import {ProductType} from "../ordered-product/ordered-product";
 import {option} from "fp-ts";
 import {Option} from "fp-ts/Option";
 import {pipe} from "fp-ts/function";
-import * as O from 'fp-ts/lib/Option'
 
 export type TaxableProductAndTaxRate = [TaxableProduct, TaxRate]
 
@@ -97,10 +96,10 @@ export function translateToTaxableProduct(unClassifyProducts: UnClassifiedProduc
   return unClassifyProducts
     .flatMap(unClassifyProduct => pipe(
       reducedTaxRateIntegratedAsset(unClassifyProduct),
-      O.alt(() => standardTaxRateIntegratedAsset(unClassifyProduct)),
-      O.alt(() => newspaper(unClassifyProduct)),
-      O.alt(() => foodAndBeverage(unClassifyProduct)),
-      O.fold(
+      option.alt(() => standardTaxRateIntegratedAsset(unClassifyProduct)),
+      option.alt(() => newspaper(unClassifyProduct)),
+      option.alt(() => foodAndBeverage(unClassifyProduct)),
+      option.fold(
         () => [other(unClassifyProduct)],
         taxableProduct => [taxableProduct]
       ))
@@ -109,7 +108,8 @@ export function translateToTaxableProduct(unClassifyProducts: UnClassifiedProduc
 
 //　商品を税率別に分類し、TaxableProductAndTaxRateを返す関数
 export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): TaxableProductAndTaxRate {
-  switch (taxableProduct.type) {
+  const type = taxableProduct.type;
+  switch (type) {
     case TaxableProductType.FoodAndBeverage:
       return [taxableProduct, {taxRate: 1.08}]
     case TaxableProductType.Newspaper:
@@ -120,5 +120,7 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
       return [taxableProduct, {taxRate: 1.08}]
     case TaxableProductType.Other:
       return [taxableProduct, {taxRate: 1.1}]
+    default:
+      const _: never = type;
   }
 }
