@@ -17,7 +17,7 @@ export function translateToWorkflowInput(inputString: string): WorkflowInputs {
         deliveryMethod: input.deliveryMethodType,
         deliveryTo: input.deliveryToType,
         price: input.price,
-      } satisfies WorkflowInput
+      }
     })
 }
 
