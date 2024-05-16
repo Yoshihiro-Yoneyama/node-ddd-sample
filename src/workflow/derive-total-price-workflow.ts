@@ -11,7 +11,7 @@ import {calculateTotalWithTax} from "../domain/taxable-product/calculate-total-w
 
 export namespace DeriveTotalPriceWorkflow {
   export function deriveTotalPrice(inputs: DeriveTotalPriceWorkflowInputs) {
-    // 入力文字列から注文商品リストを作成する
+    // インプットから注文商品リストを作成する
     const orderedProducts: OrderedProducts = OrderedProducts(
       inputs
         .map(input => createProduct(
@@ -32,7 +32,7 @@ export namespace DeriveTotalPriceWorkflow {
       .map(classifiedProduct => createTaxableProductAndTaxRate(classifiedProduct));
     // 商品と税率の組のリストから合計金額を算出する
     const totalWithTax = calculateTotalWithTax(taxableProductAndTaxRateList);
-    // 値引き対象の判定及び最終金額を返す
+    // 値引き対象の判定及び最終的な合計金額を返す
     return applyDiscountRule(orderedProducts)(totalWithTax);
   }
 }
