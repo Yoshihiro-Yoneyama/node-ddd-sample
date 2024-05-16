@@ -13,23 +13,11 @@ import {
 } from "./ordered-product";
 
 describe('Ordered Product Tests', () => {
-  describe('OrderedProduct', () => {
-    it('OrderedProductを生成する', () => {
-      const orderedProduct = {
-        id: OrderedProductId("test"),
-        productType: ProductType.Newspaper,
-        isOralProduct: IsOralProduct(false),
-        serviceType: ServiceType.TakeOut,
-        deliveryMethod: DeliveryMethod.Catering,
-        deliveryTo: DeliveryMethod.InternetDelivery,
-        price: ProductPrice(1000),
-      }
-      expect(orderedProduct).toBeTruthy();
-    });
-  });
-
   describe('OrderedProducts', () => {
-    it('OrderedProductsを生成する', () => {
+    it('OrderedProductsが0個の場合エラーを返す', () => {
+      expect(() => OrderedProducts([])).toThrowError("商品は1〜10000個で入力してください。");
+    });
+    it('OrderedProductsを1件生成する', () => {
       const orderedProducts = [
         {
           id: OrderedProductId("test"),
@@ -37,14 +25,11 @@ describe('Ordered Product Tests', () => {
           isOralProduct: IsOralProduct(false),
           serviceType: ServiceType.TakeOut,
           deliveryMethod: DeliveryMethod.Catering,
-          deliveryTo: DeliveryMethod.InternetDelivery,
+          deliveryTo: DeliveryTo.Apartment,
           price: ProductPrice(1000),
         }
       ]
-      expect(orderedProducts).toBeTruthy();
-    });
-    it('OrderedProductsが0個の場合エラーを返す', () => {
-      expect(() => OrderedProducts([])).toThrowError("商品は1〜10000個で入力してください。");
+      expect(OrderedProducts(orderedProducts)).toBeTruthy();
     });
     it('OrderedProductsが10000個より大きい場合エラーを返す', () => {
       expect(() => OrderedProducts(new Array(10001).fill({

@@ -1,6 +1,6 @@
-import {WorkflowInputs} from "../../workflow/derive-total-price-workflow-input";
+import {DeriveTotalPriceWorkflowInputs} from "../../workflow/derive-total-price-workflow-input";
 
-export function translateToWorkflowInput(inputString: string): WorkflowInputs {
+export function translateToWorkflowInput(inputString: string): DeriveTotalPriceWorkflowInputs {
   return inputString
     .split(':')
     .map(part => ({remainder: part}))

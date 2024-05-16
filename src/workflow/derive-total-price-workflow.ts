@@ -1,4 +1,4 @@
-import {WorkflowInputs} from "./derive-total-price-workflow-input";
+import {DeriveTotalPriceWorkflowInputs} from "./derive-total-price-workflow-input";
 import {createProduct, IsOralProduct, OrderedProducts, ProductPrice} from "../domain/ordered-product/ordered-product";
 import {translateToUnclassifiedProduct} from "../domain/taxable-product/unclassified-taxable-product";
 import {
@@ -10,7 +10,7 @@ import {applyDiscountRule} from "../domain/taxable-product/discount-rule";
 import {calculateTotalWithTax} from "../domain/taxable-product/calculate-total-with-tax";
 
 export namespace DeriveTotalPriceWorkflow {
-  export function deriveTotalPrice(inputs: WorkflowInputs) {
+  export function deriveTotalPrice(inputs: DeriveTotalPriceWorkflowInputs) {
     // 入力文字列から注文商品リストを作成する
     const orderedProducts: OrderedProducts = OrderedProducts(
       inputs

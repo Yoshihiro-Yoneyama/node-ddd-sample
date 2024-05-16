@@ -1,4 +1,4 @@
-export type WorkflowInput = {
+export type DeriveTotalPriceWorkflowInput = {
   productType: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
   isOralProduct: boolean,
   serviceType: "TakeOut" | "EatIn",
@@ -7,4 +7,4 @@ export type WorkflowInput = {
   price: number,
 }
 
-export type WorkflowInputs = WorkflowInput[];
+export type DeriveTotalPriceWorkflowInputs = DeriveTotalPriceWorkflowInput[];
