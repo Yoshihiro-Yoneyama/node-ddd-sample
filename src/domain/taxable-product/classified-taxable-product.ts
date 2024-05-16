@@ -28,22 +28,43 @@ export function TaxableProductPrice(value: number): TaxableProductPrice {
   return value as TaxableProductPrice;
 }
 
-// 税率未分類の商品から税率別の商品へ変換する関数
-export function translateToTaxableProduct(unClassifyProducts: UnclassifiedProduct[]): TaxableProduct[] {
-  return unClassifyProducts
-    .flatMap(unClassifiedProduct => pipe(
-      reducedTaxRateIntegratedAsset(unClassifiedProduct),
-      option.alt(() => standardTaxRateIntegratedAsset(unClassifiedProduct)),
-      option.alt(() => newspaper(unClassifiedProduct)),
-      option.alt(() => foodAndBeverage(unClassifiedProduct)),
+/**
+ * 税率未分類の商品リストから税率別の商品リストへ変換する関数
+ *
+ * @remarks
+ * このメソッドでは税率未分類の商品リストをから1件ずつ抜き出し、 \
+ * 税率別の商品リストに変換している。 \
+ * 以下、各分類メソッド
+ * <br>
+ *  <li>reducedTaxRateIntegratedAsset: 軽減税率対象の一体資産へ変換</li>
+ *  <li>standardTaxRateIntegratedAsset: 通常税率対象の一体資産へ変換</li>
+ *  <li>newspaper: 単体商品の新聞へ変換</li>
+ *  <li>foodAndBeverage: 単体商品の飲食料品へ変換</li>
+ *  <li>other: 単体商品へ変換</li>
+ * </br>
+ * @param unclassifiedProducts 税率未分類の商品リスト
+ * @returns TaxableProduct 税率別の商品リスト
+ */
+export function translateToTaxableProduct(unclassifiedProducts: UnclassifiedProduct[]): TaxableProduct[] {
+  return unclassifiedProducts
+    .flatMap(unclassifiedProduct => pipe(
+      reducedTaxRateIntegratedAsset(unclassifiedProduct),
+      option.alt(() => standardTaxRateIntegratedAsset(unclassifiedProduct)),
+      option.alt(() => newspaper(unclassifiedProduct)),
+      option.alt(() => foodAndBeverage(unclassifiedProduct)),
       option.fold(
-        () => [other(unClassifiedProduct)],
+        () => [other(unclassifiedProduct)],
         taxableProduct => [taxableProduct]
       ))
     )
 }
 
-//　商品を税率別に分類し、TaxableProductAndTaxRateを返す関数
+/**
+ * 商品を税率別に分類し、税率別の商品と税率組み合わせを返す関数
+ *
+ * @param taxableProduct 税率別の商品
+ * @returns TaxableProductAndTaxRate 税率別の商品と税率組み合わせ
+ */
 export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): TaxableProductAndTaxRate {
   const type = taxableProduct.type;
   switch (type) {
