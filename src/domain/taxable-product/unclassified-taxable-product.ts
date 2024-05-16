@@ -59,7 +59,14 @@ export function SingleProductPrice(value: number): SingleProductPrice {
   return value as SingleProductPrice;
 }
 
-// 注文内容から税率未分類の商品を作成する関数
+/**
+ * 注文内容から税率未分類の商品を作成する関数
+ *
+ *
+ *
+ * @param orderedProducts
+ * @return UnclassifiedProduct[]: 税率未分類の商品リスト
+ */
 export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
   const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);
   const integratedAssets = createUnclassifiedIntegratedAsset(pairs);
@@ -67,8 +74,11 @@ export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts)
   return [...integratedAssets, ...singles];
 }
 
-//一体資産の商品の組を作成する関数
-export function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
+/**
+ * 一体資産の商品の組を作成する関数
+ * @param orderedProducts
+ */
+function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
     orderedProducts,
     zip(orderedProducts.slice(1)),
@@ -76,8 +86,8 @@ export function createUnclassifiedIntegratedAssetBundle(orderedProducts: Ordered
   )
 }
 
-// 一体資産を作成する関数
-export function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
+/** 一体資産を作成する関数 */
+function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
     return {
       type: "UnclassifiedIntegratedAsset",
@@ -93,7 +103,7 @@ export function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): Uncl
 }
 
 // 注文した商品リストから一体資産ではない商品のリストを抽出する関数
-export function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orderedProductsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
+function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orderedProductsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
   const orderedProductsFromIntegratedAsset = orderedProductsForIntegratedAsset.flat();
   //idでの同一性チェック
   return orderedProducts

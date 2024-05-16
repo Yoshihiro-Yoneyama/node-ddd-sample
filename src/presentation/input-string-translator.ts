@@ -1,5 +1,68 @@
-import {DeriveTotalPriceWorkflowInputs} from "../../workflow/derive-total-price-workflow-input";
+import {DeriveTotalPriceWorkflowInputs} from "../workflow/derive-total-price-workflow-input";
 
+export type TemporaryWorkflowInput = {
+  remainder: string,
+  productType: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
+  isOralProduct: boolean,
+  serviceType: "TakeOut" | "EatIn",
+  deliveryMethodType: "Catering" | "Delivery" | "InternetDelivery",
+  deliveryToType: "House" | "NursingHome" | "Apartment" | "NoPlace",
+  price: number,
+}
+
+export enum ProductCode {
+  Book = "B",
+  Beverage = "D",
+  Alcohol = "Da",
+  QuasiDrug = "de",
+  Newspaper = "Bn",
+  Medicine = "d",
+  Other = "O",
+  Food = "P"
+}
+
+// 製品種別と経口摂取情報をマッピング
+export const productMapping: {
+  [key in ProductCode]: {
+    type: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
+    isOral: boolean
+  }
+} = {
+  [ProductCode.Book]: {type: "Book", isOral: false},
+  [ProductCode.Beverage]: {type: "Beverage", isOral: true},
+  [ProductCode.Alcohol]: {type: "Alcohol", isOral: true},
+  [ProductCode.QuasiDrug]: {type: "QuasiDrug", isOral: true},
+  [ProductCode.Newspaper]: {type: "Newspaper", isOral: false},
+  [ProductCode.Medicine]: {type: "Medicine", isOral: true},
+  [ProductCode.Other]: {type: "Other", isOral: false},
+  [ProductCode.Food]: {type: "Food", isOral: true}
+};
+
+export enum ServiceCode {
+  TakeOut = "T",
+  EatIn = "E",
+}
+
+export enum DeliveryMethodCode {
+  Catering = "K",
+  Delivery = "D",
+  InternetDelivery = "N"
+}
+
+export enum DeliveryToCode {
+  House = "D",
+  NursingHome = "N",
+  Apartment = "M",
+  NoPlace = "",
+}
+
+/**
+ * 入力文字列をワークフローの入力に変換する
+ *
+ *
+ *
+ * @param inputString
+ */
 export function translateToWorkflowInput(inputString: string): DeriveTotalPriceWorkflowInputs {
   return inputString
     .split(':')
@@ -21,63 +84,7 @@ export function translateToWorkflowInput(inputString: string): DeriveTotalPriceW
     })
 }
 
-type TemporaryWorkflowInput = {
-  remainder: string,
-  productType: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
-  isOralProduct: boolean,
-  serviceType: "TakeOut" | "EatIn",
-  deliveryMethodType: "Catering" | "Delivery" | "InternetDelivery",
-  deliveryToType: "House" | "NursingHome" | "Apartment" | "NoPlace",
-  price: number,
-}
-
-enum ProductCode {
-  Book = "B",
-  Beverage = "D",
-  Alcohol = "Da",
-  QuasiDrug = "de",
-  Newspaper = "Bn",
-  Medicine = "d",
-  Other = "O",
-  Food = "P"
-}
-
-// 製品種別と経口摂取情報をマッピング
-const productMapping: {
-  [key in ProductCode]: {
-    type: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
-    isOral: boolean
-  }
-} = {
-  [ProductCode.Book]: {type: "Book", isOral: false},
-  [ProductCode.Beverage]: {type: "Beverage", isOral: true},
-  [ProductCode.Alcohol]: {type: "Alcohol", isOral: true},
-  [ProductCode.QuasiDrug]: {type: "QuasiDrug", isOral: true},
-  [ProductCode.Newspaper]: {type: "Newspaper", isOral: false},
-  [ProductCode.Medicine]: {type: "Medicine", isOral: true},
-  [ProductCode.Other]: {type: "Other", isOral: false},
-  [ProductCode.Food]: {type: "Food", isOral: true}
-};
-
-enum ServiceCode {
-  TakeOut = "T",
-  EatIn = "E",
-}
-
-enum DeliveryMethodCode {
-  Catering = "K",
-  Delivery = "D",
-  InternetDelivery = "N"
-}
-
-enum DeliveryToCode {
-  House = "D",
-  NursingHome = "N",
-  Apartment = "M",
-  NoPlace = "",
-}
-
-function extractProductType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
+export function extractProductType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const productKey = Object.keys(productMapping)
       .sort((a, b) => b.length - a.length)
@@ -94,7 +101,7 @@ function extractProductType(input: TemporaryWorkflowInput): TemporaryWorkflowInp
   }
 }
 
-function extractServiceType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
+export function extractServiceType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const serviceKey = Object.keys(ServiceCode)
       .find(key => input.remainder.startsWith(ServiceCode[key])) as keyof typeof ServiceCode;
@@ -108,7 +115,7 @@ function extractServiceType(input: TemporaryWorkflowInput): TemporaryWorkflowInp
   }
 }
 
-function extractDeliveryMethodType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
+export function extractDeliveryMethodType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const deliveryMethodKey = Object.keys(DeliveryMethodCode)
       .find(key => input.remainder.startsWith(DeliveryMethodCode[key])) as keyof typeof DeliveryMethodCode;
@@ -122,7 +129,7 @@ function extractDeliveryMethodType(input: TemporaryWorkflowInput): TemporaryWork
   }
 }
 
-function extractDeliveryToType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
+export function extractDeliveryToType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const deliveryToKey = Object.keys(DeliveryToCode)
       .find(key => input.remainder.startsWith(DeliveryToCode[key])) as keyof typeof DeliveryToCode;
@@ -137,7 +144,7 @@ function extractDeliveryToType(input: TemporaryWorkflowInput): TemporaryWorkflow
   }
 }
 
-function extractPrice(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
+export function extractPrice(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const price = Number(input.remainder);
     return {

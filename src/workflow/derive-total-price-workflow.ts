@@ -7,9 +7,17 @@ import {
   translateToTaxableProduct
 } from "../domain/taxable-product/classified-taxable-product";
 import {applyDiscountRule} from "../domain/taxable-product/discount-rule";
-import {calculateTotalWithTax} from "../domain/taxable-product/calculate-total-with-tax";
+import {calculateTotalWithTax} from "../domain/taxable-product/total-with-tax-calculator";
 
 export namespace DeriveTotalPriceWorkflow {
+
+  /**
+   * 注文を種別ごとに分類した情報から最終的な合計金額を算出する
+   *
+   *
+   *
+   * @param inputs
+   */
   export function deriveTotalPrice(inputs: DeriveTotalPriceWorkflowInputs) {
     // インプットから注文商品リストを作成する
     const orderedProducts: OrderedProducts = OrderedProducts(

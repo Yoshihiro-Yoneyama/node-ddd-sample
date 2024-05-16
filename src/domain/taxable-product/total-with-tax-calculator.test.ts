@@ -1,5 +1,5 @@
 import {describe, expect, it} from "@jest/globals";
-import {calculateTotalWithTax} from "./calculate-total-with-tax";
+import {calculateTotalWithTax} from "./total-with-tax-calculator";
 import {TaxableProductAndTaxRate, TaxableProductPrice, TaxableProductType} from "./classified-taxable-product";
 
 describe('CalculateTotalWithTax', () => {
