@@ -60,7 +60,7 @@ export function translateToTaxableProduct(unclassifiedProducts: UnclassifiedProd
 }
 
 /**
- * 商品を税率別に分類し、税率別の商品と税率組み合わせを返す関数
+ * 税率別の商品と税率組み合わせを返す関数
  *
  * @param taxableProduct 税率別の商品
  * @returns TaxableProductAndTaxRate 税率別の商品と税率組み合わせ
