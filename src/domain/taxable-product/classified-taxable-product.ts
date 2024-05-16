@@ -62,7 +62,7 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
   }
 }
 
-export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   const isReducedTaxRateIntegratedAsset = unclassifiedProduct.type === "UnclassifiedIntegratedAsset" &&
     (unclassifiedProduct.oralProduct.price + unclassifiedProduct.nonOralProduct.price) * 1.1 < 10000 &&
     unclassifiedProduct.oralProduct.price * 2 > unclassifiedProduct.nonOralProduct.price &&
@@ -75,7 +75,7 @@ export function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedP
     : option.none
 }
 
-export function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedIntegratedAsset"
     ? option.some({
       type: TaxableProductType.StandardTaxRateIntegratedAsset,
@@ -84,7 +84,7 @@ export function standardTaxRateIntegratedAsset(unclassifiedProduct: Unclassified
     : option.none
 }
 
-export function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
   unclassifiedProduct.productType === ProductType.Newspaper
     ? option.some({
@@ -94,7 +94,7 @@ export function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<Taxa
     : option.none
 }
 
-export function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
+function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
   unclassifiedProduct.isFoodAndBeverage
     ? option.some({
@@ -104,7 +104,7 @@ export function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Optio
     : option.none
 }
 
-export function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
+function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
   if (unclassifiedProduct.type === "UnclassifiedSingleProduct") {
     return {
       type: TaxableProductType.Other,
