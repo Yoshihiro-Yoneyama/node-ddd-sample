@@ -37,7 +37,7 @@ export function IsFoodAndBeverage(value: boolean): IsFoodAndBeverage {
 
 export type OralProductPrice = Brand<number, "OralProductPrice">;
 export function OralProductPrice(value: number): OralProductPrice {
-  if (value <= 0 || value >= 99999) {
+  if (value < 0 || value > 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as OralProductPrice;
@@ -45,7 +45,7 @@ export function OralProductPrice(value: number): OralProductPrice {
 
 export type NonOralProductPrice = Brand<number, "NonOralProductPrice">;
 export function NonOralProductPrice(value: number): NonOralProductPrice {
-  if (value <= 0 || value >= 99999) {
+  if (value < 0 || value > 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as NonOralProductPrice;
@@ -53,7 +53,7 @@ export function NonOralProductPrice(value: number): NonOralProductPrice {
 
 export type SingleProductPrice = Brand<number, "SingleProductPrice">;
 export function SingleProductPrice(value: number): SingleProductPrice {
-  if (value <= 0 || value >= 99999) {
+  if (value < 0 || value > 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as SingleProductPrice;
@@ -68,7 +68,7 @@ export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts)
 }
 
 //一体資産の商品の組を作成する関数
-function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
+export function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
     orderedProducts,
     zip(orderedProducts.slice(1)),
@@ -77,7 +77,7 @@ function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProduct
 }
 
 // 一体資産を作成する関数
-function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
+export function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
     return {
       type: "UnclassifiedIntegratedAsset",
@@ -93,11 +93,11 @@ function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): Unclassifie
 }
 
 // 注文した商品リストから一体資産ではない商品のリストを抽出する関数
-function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, productsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
-  const flat = productsForIntegratedAsset.flat();
+export function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orderedProductsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
+  const orderedProductsFromIntegratedAsset = orderedProductsForIntegratedAsset.flat();
   //idでの同一性チェック
   return orderedProducts
-    .filter(product => !flat.some(b => product.id === b.id))
+    .filter(product => !orderedProductsFromIntegratedAsset.some(b => product.id === b.id))
     .map((product) => {
       return {
         type: "UnclassifiedSingleProduct",
