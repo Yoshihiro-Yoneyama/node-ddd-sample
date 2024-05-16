@@ -4,7 +4,8 @@
   "description": "この問題はオープンソースではありません。Publicリポジトリなどに公開しないでください。 期間は2週間とし、公平性を保つため速く提出したとしても評価対象にはなりません。",
   "main": "index.js",
   "scripts": {
-    "start": "node index.ts",
+    "start": "ts-node src/index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --outdir=dist",
     "test": "jest"
   },
   "keywords": [],

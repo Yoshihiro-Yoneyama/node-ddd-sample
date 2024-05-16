@@ -1,4 +1,6 @@
 import {DeriveTotalPriceWorkflowInputs} from "../workflow/derive-total-price-workflow-input";
+import {throwError} from "fp-ts/Option";
+import {option} from "fp-ts";
 
 export type TemporaryWorkflowInput = {
   remainder: string,
@@ -38,10 +40,12 @@ export const productMapping: {
   [ProductCode.Food]: {type: "Food", isOral: true}
 };
 
-export enum ServiceCode {
-  TakeOut = "T",
-  EatIn = "E",
-}
+export const ServiceCode = {
+  TakeOut: "T",
+  EatIn: "E",
+} as const;
+export type ServiceCode = typeof ServiceCode[keyof typeof ServiceCode];
+
 
 export enum DeliveryMethodCode {
   Catering = "K",
@@ -103,15 +107,17 @@ export function extractProductType(input: TemporaryWorkflowInput): TemporaryWork
 
 export function extractServiceType(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
-    const serviceKey = Object.keys(ServiceCode)
-      .find(key => input.remainder.startsWith(ServiceCode[key])) as keyof typeof ServiceCode;
+    const [serviceKey] = Object.entries(ServiceCode)
+      .filter(([key, value]) => input.remainder.startsWith(value))
+      .map(([key, value]) => key as keyof typeof ServiceCode);
+    if (!serviceKey) throw new Error();
     return {
       ...input,
       serviceType: serviceKey,
       remainder: input.remainder.slice(1)
     };
   } catch (e) {
-    throw new Error("存在しないサービス種別が指定されていrます。")
+    throw new Error("存在しないサービス種別が指定されています。")
   }
 }
 
@@ -119,6 +125,7 @@ export function extractDeliveryMethodType(input: TemporaryWorkflowInput): Tempor
   try {
     const deliveryMethodKey = Object.keys(DeliveryMethodCode)
       .find(key => input.remainder.startsWith(DeliveryMethodCode[key])) as keyof typeof DeliveryMethodCode;
+    if (!deliveryMethodKey) throw new Error();
     return {
       ...input,
       deliveryMethodType: deliveryMethodKey,
@@ -134,19 +141,21 @@ export function extractDeliveryToType(input: TemporaryWorkflowInput): TemporaryW
     const deliveryToKey = Object.keys(DeliveryToCode)
       .find(key => input.remainder.startsWith(DeliveryToCode[key])) as keyof typeof DeliveryToCode;
     const remainder = deliveryToKey !== "NoPlace" ? input.remainder.slice(1) : input.remainder;
+    if (isNaN(parseInt(remainder))) throw new Error("sss");
     return {
       ...input,
       deliveryToType: deliveryToKey,
       remainder: remainder
-    }
+    };
   } catch (e) {
-    throw new Error("存在しない配送先が指定されています。")
+    throw new Error("存在しない提供場所が指定されています。")
   }
 }
 
 export function extractPrice(input: TemporaryWorkflowInput): TemporaryWorkflowInput {
   try {
     const price = Number(input.remainder);
+    if (isNaN(price)) throw new Error();
     return {
       ...input,
       price: price
