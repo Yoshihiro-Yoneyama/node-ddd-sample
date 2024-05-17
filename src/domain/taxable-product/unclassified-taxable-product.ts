@@ -10,6 +10,9 @@ import {pipe} from 'fp-ts/function'
 import {filter, zip} from 'fp-ts/Array'
 import {option} from "fp-ts";
 
+/**
+ * 税率未分類の商品
+ */
 export type UnclassifiedProduct = UnclassifiedIntegratedAsset | UnclassifiedSingleProduct
 
 export type UnclassifiedIntegratedAsset = {
@@ -65,14 +68,14 @@ export function SingleProductPrice(value: number): SingleProductPrice {
  * @remarks
  * 以下の流れで税率未分類の商品を作成する。 \
  * 凡例　A:経口摂取する商品 B:経口摂取しない商品 C:一体資産 D:単体商品
- * 1. AとBが交互に並んでいる場合、AとBが連続している箇所を一体資産の組として抽出する \
- * [A1, B2, B3, A4] -> [[A1, B2], [B2, B3], [B3, A4]]　->  [[A1, B2]]
+ * 1. AとBが交互に並んでいる場合、A->Bの順で連続している箇所を一体資産の組として抽出する \
+ * [A1, B2, B3, A4, B5] -> [[A1, B2], [B2, B3], [B3, A4], [A4, B5]]　->  [[A1, B2], [A4, B5]]
  * 2. 抽出した組から一体資産のリストを生成する \
- * [[A1, B2]]  -> [C1]
+ * [[A1, B2], [A4, B5]]  -> [C1, C2]
  * 3. 一体資産として扱わなかった商品を単体商品としてリストを作成する \
- * [A1, B2, B3, A4] - [A1, B2] -> [B3, A4] -> [D3, D4]
+ * [A1, B2, B3, A4, A5] - [A1, B2, A4, B5] -> [B3] -> [D1]
  * 4. 税率未分類の商品リストを作成する \
- * [C1] + [D3, D4] -> [C1, D3, D4]
+ * [C1, C2] + [D1] -> [C1, C2, D1]
  *
  * @param orderedProducts
  * @return 税率未分類の商品リスト
@@ -131,7 +134,9 @@ function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orde
     });
 }
 
-// 飲食料品かの判定を行う関数
+/**
+ * 飲食料品かの判定を行う関数
+ */
 export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
   return pipe(
     !product.isOralProduct ? option.some(false) : option.none,
