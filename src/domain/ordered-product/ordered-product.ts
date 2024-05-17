@@ -1,6 +1,9 @@
 import {Brand} from "../../lib/brand";
 import * as crypto from "node:crypto";
 
+/**
+ * 注文商品
+ */
 export type OrderedProduct = {
   id: OrderedProductId,
   productType: ProductType,
