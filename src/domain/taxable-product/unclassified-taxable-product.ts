@@ -62,10 +62,20 @@ export function SingleProductPrice(value: number): SingleProductPrice {
 /**
  * 注文内容から税率未分類の商品を作成する関数
  *
- *
+ * @remarks
+ * 以下の流れで税率未分類の商品を作成する。 \
+ * 凡例　A:経口摂取する商品 B:経口摂取しない商品 C:一体資産 D:単体商品
+ * 1. AとBが交互に並んでいる場合、AとBが連続している箇所を一体資産の組として抽出する \
+ * [A1, B2, B3, A4] -> [[A1, B2], [B2, B3], [B3, A4]]　->  [[A1, B2]]
+ * 2. 抽出した組から一体資産のリストを生成する \
+ * [[A1, B2]]  -> [C1]
+ * 3. 一体資産として扱わなかった商品を単体商品としてリストを作成する \
+ * [A1, B2, B3, A4] - [A1, B2] -> [B3, A4] -> [D3, D4]
+ * 4. 税率未分類の商品リストを作成する \
+ * [C1] + [D3, D4] -> [C1, D3, D4]
  *
  * @param orderedProducts
- * @return UnclassifiedProduct[]: 税率未分類の商品リスト
+ * @return 税率未分類の商品リスト
  */
 export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
   const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);
@@ -76,7 +86,6 @@ export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts)
 
 /**
  * 一体資産の商品の組を作成する関数
- * @param orderedProducts
  */
 function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
@@ -86,7 +95,9 @@ function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProduct
   )
 }
 
-/** 一体資産を作成する関数 */
+/**
+ * 一体資産を作成する関数
+ */
 function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
     return {
@@ -102,10 +113,11 @@ function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): Unclassifie
   });
 }
 
-// 注文した商品リストから一体資産ではない商品のリストを抽出する関数
+/**
+ * 一体資産として扱わなかった商品を作成する関数
+ */
 function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orderedProductsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
   const orderedProductsFromIntegratedAsset = orderedProductsForIntegratedAsset.flat();
-  //idでの同一性チェック
   return orderedProducts
     .filter(product => !orderedProductsFromIntegratedAsset.some(b => product.id === b.id))
     .map((product) => {
