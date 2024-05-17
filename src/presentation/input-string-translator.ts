@@ -1,6 +1,4 @@
 import {DeriveTotalPriceWorkflowInputs} from "../workflow/derive-total-price-workflow-input";
-import {throwError} from "fp-ts/Option";
-import {option} from "fp-ts";
 
 export type TemporaryWorkflowInput = {
   remainder: string,
@@ -23,7 +21,6 @@ export enum ProductCode {
   Food = "P"
 }
 
-// 製品種別と経口摂取情報をマッピング
 export const productMapping: {
   [key in ProductCode]: {
     type: "Book" | "Beverage" | "Alcohol" | "QuasiDrug" | "Newspaper" | "Medicine" | "Other" | "Food",
@@ -63,9 +60,8 @@ export enum DeliveryToCode {
 /**
  * 入力文字列をワークフローの入力に変換する
  *
- *
- *
  * @param inputString
+ * @returns ワークフローの入力
  */
 export function translateToWorkflowInput(inputString: string): DeriveTotalPriceWorkflowInputs {
   return inputString
