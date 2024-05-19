@@ -1,5 +1,10 @@
 import {describe, expect, it} from "@jest/globals";
-import {TaxableProductPrice, TaxableProductType, translateToTaxableProduct} from "./classified-taxable-product";
+import {
+  createTaxableProductAndTaxRate,
+  TaxableProductPrice,
+  TaxableProductType,
+  translateToTaxableProduct
+} from "./classified-taxable-product";
 import {
   IsFoodAndBeverage,
   NonOralProductPrice,
@@ -11,15 +16,58 @@ import {IsOralProduct, ProductType} from "../ordered-product/ordered-product";
 
 describe('classified Taxable Product', () => {
   describe('TaxableProductPrice', () => {
-    it('TaxableProductPriceの0未満の場合エラーを返す', () => {
+    it('TaxableProductPriceが0未満の場合エラーを返す', () => {
       expect(() => TaxableProductPrice(-1)).toThrowError("金額は0〜99999の整数で入力してください。");
     });
-    it('TaxableProductPriceの99999より大きい場合エラーを返す', () => {
+    it('TaxableProductPriceが99999より大きい場合エラーを返す', () => {
       expect(() => TaxableProductPrice(100000)).toThrowError("金額は0〜99999の整数で入力してください。");
     });
-    it('TaxableProductPriceを生成する', () => {
-      const actual = TaxableProductPrice(100);
-      expect(actual).toBe(100);
+    it.each([0, 99999])('TaxableProductPriceを生成する', (price) => {
+      const actual = TaxableProductPrice(price);
+      expect(actual).toBe(price);
+    });
+  });
+
+  describe('createTaxableProductAndTaxRate', () => {
+    it('ReducedTaxRateIntegratedAssetの場合税率8%のTaxableProductAndTaxRateが生成される', () => {
+      const taxableProduct = {
+        type: TaxableProductType.ReducedTaxRateIntegratedAsset,
+        price: TaxableProductPrice(100)
+      };
+      const actual = createTaxableProductAndTaxRate(taxableProduct);
+      expect(actual).toEqual([taxableProduct, {taxRate: 1.08}]);
+    });
+    it('StandardTaxRateIntegratedAssetの場合税率10%のTaxableProductAndTaxRateが生成される', () => {
+      const taxableProduct = {
+        type: TaxableProductType.StandardTaxRateIntegratedAsset,
+        price: TaxableProductPrice(100)
+      };
+      const actual = createTaxableProductAndTaxRate(taxableProduct);
+      expect(actual).toEqual([taxableProduct, {taxRate: 1.1}]);
+    });
+    it('Newspaperの場合税率8%のTaxableProductAndTaxRateが生成される', () => {
+      const taxableProduct = {
+        type: TaxableProductType.Newspaper,
+        price: TaxableProductPrice(100)
+      };
+      const actual = createTaxableProductAndTaxRate(taxableProduct);
+      expect(actual).toEqual([taxableProduct, {taxRate: 1.08}]);
+    });
+    it('FoodAndBeverageの場合税率8%のTaxableProductAndTaxRateが生成される', () => {
+      const taxableProduct = {
+        type: TaxableProductType.FoodAndBeverage,
+        price: TaxableProductPrice(100)
+      };
+      const actual = createTaxableProductAndTaxRate(taxableProduct);
+      expect(actual).toEqual([taxableProduct, {taxRate: 1.08}]);
+    });
+    it('Otherの場合税率10%のTaxableProductAndTaxRateが生成される', () => {
+      const taxableProduct = {
+        type: TaxableProductType.Other,
+        price: TaxableProductPrice(100)
+      };
+      const actual = createTaxableProductAndTaxRate(taxableProduct);
+      expect(actual).toEqual([taxableProduct, {taxRate: 1.1}]);
     });
   });
 

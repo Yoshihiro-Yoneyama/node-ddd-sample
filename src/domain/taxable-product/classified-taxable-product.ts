@@ -32,21 +32,18 @@ export function TaxableProductPrice(value: number): TaxableProductPrice {
 }
 
 /**
- * 税率別の商品と税率組み合わせを返す関数
- *
- * @param taxableProduct 税率別の商品
- * @returns 税率別の商品と税率組み合わせ
+ * 税率別の商品から税率別の商品と税率の組を返す関数
  */
 export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): TaxableProductAndTaxRate {
   const type = taxableProduct.type;
   switch (type) {
-    case TaxableProductType.FoodAndBeverage:
-      return [taxableProduct, {taxRate: 1.08}]
-    case TaxableProductType.Newspaper:
+    case TaxableProductType.ReducedTaxRateIntegratedAsset:
       return [taxableProduct, {taxRate: 1.08}]
     case TaxableProductType.StandardTaxRateIntegratedAsset:
       return [taxableProduct, {taxRate: 1.1}]
-    case TaxableProductType.ReducedTaxRateIntegratedAsset:
+    case TaxableProductType.Newspaper:
+      return [taxableProduct, {taxRate: 1.08}]
+    case TaxableProductType.FoodAndBeverage:
       return [taxableProduct, {taxRate: 1.08}]
     case TaxableProductType.Other:
       return [taxableProduct, {taxRate: 1.1}]
@@ -61,9 +58,6 @@ export function createTaxableProductAndTaxRate(taxableProduct: TaxableProduct): 
  * @remarks
  * このメソッドでは税率未分類の商品リストをから1件ずつ抜き出し、 \
  * 各変換メソッドを用いて税率別の商品に変換している
- *
- * @param unclassifiedProducts 税率未分類の商品リスト
- * @returns 税率別の商品リスト
  */
 export function translateToTaxableProduct(unclassifiedProducts: UnclassifiedProduct[]): TaxableProduct[] {
   return unclassifiedProducts
@@ -88,9 +82,6 @@ export function translateToTaxableProduct(unclassifiedProducts: UnclassifiedProd
  * 2. 税込額が1万円未満である
  * 3. 税抜合計額に対して、経口摂取しない商品の税抜額が2/3以上を占めない
  * 4. 経口摂取する商品のisFoodAndBeverageがtrueである
- *
- * @param unclassifiedProduct 税率未分類の商品
- * @returns 軽減税率対象の一体資産またはoption.none
  */
 function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   const isReducedTaxRateIntegratedAsset =
@@ -113,9 +104,6 @@ function reducedTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct)
  * 以下の条件を満たす場合、一般税率の一体資産として扱う
  * 1. typeがUnclassifiedIntegratedAssetである
  * 2. 軽減税率対象の一体資産ではない
- *
- * @param unclassifiedProduct 税率未分類の商品
- * @returns 一般税率の一体資産またはoption.none
  */
 function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedIntegratedAsset"
@@ -133,9 +121,6 @@ function standardTaxRateIntegratedAsset(unclassifiedProduct: UnclassifiedProduct
  * 以下の条件を満たす場合、新聞として扱う
  * 1. typeがUnclassifiedSingleProductである
  * 2. productTypeがNewspaperである
- *
- * @param unclassifiedProduct 税率未分類の商品
- * @returns 新聞またはoption.none
  */
 function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedSingleProduct"
@@ -154,9 +139,6 @@ function newspaper(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProd
  * 以下の条件を満たす場合、飲食料品として扱う
  * 1. typeがUnclassifiedSingleProductである
  * 2. isFoodAndBeverageがtrueである
- *
- * @param unclassifiedProduct 税率未分類の商品
- * @returns 飲食料品またはoption.none
  */
 function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<TaxableProduct> {
   return unclassifiedProduct.type === "UnclassifiedSingleProduct" &&
@@ -175,9 +157,6 @@ function foodAndBeverage(unclassifiedProduct: UnclassifiedProduct): Option<Taxab
  * 以下の条件を満たす場合、その他の商品として扱う
  * 1. typeがUnclassifiedSingleProductである
  * 2. 他の変換メソッドの条件を満たさない
- *
- * @param unclassifiedProduct 税率未分類の商品
- * @returns その他の商品
  */
 function other(unclassifiedProduct: UnclassifiedProduct): TaxableProduct {
   if (unclassifiedProduct.type === "UnclassifiedSingleProduct") {
