@@ -5,7 +5,7 @@ import {DeriveTotalPriceWorkflowInputs} from "./derive-total-price-workflow-inpu
 
 describe("derive total price workflow", () => {
   describe("deriveTotalPrice", () => {
-    it("注文を種別ごとに分類した情報から最終的な合計金額を算出する", () => {
+    it("注文データを種別ごとに分類した情報から最終的な合計金額を算出する", () => {
       const input: DeriveTotalPriceWorkflowInputs = [
         {
           productType: "Food",

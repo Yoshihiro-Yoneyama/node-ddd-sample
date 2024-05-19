@@ -8,6 +8,10 @@ import {
 
 describe("input string translator", () => {
   describe("translateToWorkflowInput", () => {
+    it("入力文字列が空の場合エラーが発生する", () => {
+      const inputString = "";
+      expect(() => translateToWorkflowInput(inputString)).toThrowError("入力文字列が空です。");
+    });
     it("入力文字列をワークフローの入力に変換する", () => {
       const inputString = "BTDD500";
       const actual = translateToWorkflowInput(inputString);

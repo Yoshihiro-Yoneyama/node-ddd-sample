@@ -58,12 +58,10 @@ export enum DeliveryToCode {
 }
 
 /**
- * 入力文字列をワークフローの入力に変換する
- *
- * @param inputString
- * @returns ワークフローの入力
+ * 注文データを各種別ごとに分類した入力値に変換する関数
  */
 export function translateToWorkflowInput(inputString: string): DeriveTotalPriceWorkflowInputs {
+  if (inputString === "") throw new Error("入力文字列が空です。");
   return inputString
     .split(':')
     .map(part => ({remainder: part}))

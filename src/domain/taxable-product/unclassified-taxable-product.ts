@@ -63,10 +63,10 @@ export function SingleProductPrice(value: number): SingleProductPrice {
 }
 
 /**
- * 注文内容から税率未分類の商品を作成する関数
+ * 注文商品リストから税率未分類の商品リストを作成する関数
  *
  * @remarks
- * 以下の流れで税率未分類の商品を作成する。 \
+ * 以下の流れで税率未分類の商品リストを作成する。 \
  * 凡例　A:経口摂取する商品 B:経口摂取しない商品 C:一体資産 D:単体商品
  * 1. AとBが交互に並んでいる場合、A->Bの順で連続している箇所を一体資産の組として抽出する \
  * [A1, B2, B3, A4, B5] -> [[A1, B2], [B2, B3], [B3, A4], [A4, B5]]　->  [[A1, B2], [A4, B5]]
@@ -76,9 +76,6 @@ export function SingleProductPrice(value: number): SingleProductPrice {
  * [A1, B2, B3, A4, A5] - [A1, B2, A4, B5] -> [B3] -> [D1]
  * 4. 税率未分類の商品リストを作成する \
  * [C1, C2] + [D1] -> [C1, C2, D1]
- *
- * @param orderedProducts
- * @return 税率未分類の商品リスト
  */
 export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts): UnclassifiedProduct[] {
   const pairs = createUnclassifiedIntegratedAssetBundle(orderedProducts);

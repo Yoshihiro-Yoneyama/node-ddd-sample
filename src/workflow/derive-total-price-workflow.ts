@@ -12,19 +12,17 @@ import {calculateTotalWithTax} from "../domain/taxable-product/total-with-tax-ca
 export namespace DeriveTotalPriceWorkflow {
 
   /**
-   * 注文商品を各種別ごとに分類した入力値から最終的な合計金額を算出する
+   * 注文商品を各種別ごとに分類した入力値から最終的な合計金額を算出し返却する関数
    *
    * @remarks
    * 以下の手順で最終的な合計金額を算出する
-   * 1. 注文商品を各種別ごとに分類した入力値から注文商品リストを作成する
+   * 1. 注文データを各種別ごとに分類した入力値から注文商品リストを作成する
    * 2. 注文商品リストから税率未分類の商品リストを作成する
    * 3. 税率未分類の商品リストから税率分類の商品リストを作成する
    * 4. 税率分類の商品リストから商品と税率の組のリストを作成する
-   * 5. 商品と税率の組のリストから合計金額を算出する
-   * 6. 値引き対象の判定及び最終的な合計金額を返す
+   * 5. 商品と税率の組のリストから合計税込金額を算出する
+   * 6. 合計税込金額に対して値引きルールの適用し最終的な合計金額を算出する
    *
-   * @param inputs
-   * @returns 最終的な合計金額
    */
   export function deriveTotalPrice(inputs: DeriveTotalPriceWorkflowInputs) {
     const orderedProducts: OrderedProducts = OrderedProducts(

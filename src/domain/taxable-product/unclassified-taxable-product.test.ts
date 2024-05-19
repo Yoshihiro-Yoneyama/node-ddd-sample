@@ -22,14 +22,14 @@ describe("unclassified Taxable Product", () => {
     it("OralProductPriceの99999より大きい場合エラーを返す", () => {
       expect(() => OralProductPrice(100000)).toThrowError("金額は0〜99999の整数で入力してください。");
     });
-    it("OralProductPriceを生成する", () => {
-      const actual = OralProductPrice(100);
-      expect(actual).toBe(100);
+    it.each([0, 99999])("OralProductPriceを生成する", (price) => {
+      const actual = OralProductPrice(price);
+      expect(actual).toBe(price);
     });
   });
 
   describe("translateToUnclassifiedProduct", () => {
-    it("未分類の一体資産の組から未分類の一体資産を作成する", () => {
+    it("注文商品リストを税率未分類の商品リストに変換する", () => {
       const orderedProducts = [
         {
           id: OrderedProductId("test1"),
@@ -81,7 +81,7 @@ describe("unclassified Taxable Product", () => {
 
       ]);
     });
-    it("未分類の一体資産の組がない場合空の配列を返す", () => {
+    it("注文商品リストが場合空の配列を返す", () => {
       const pair = [];
       const actual = translateToUnclassifiedProduct(pair);
       expect(actual).toEqual([]);
@@ -90,7 +90,7 @@ describe("unclassified Taxable Product", () => {
 
 
   describe("isFoodAndBeverage", () => {
-    it("飲食料品の場合trueを返す", () => {
+    it("注文商品が飲食料品の場合trueを返す", () => {
       const product = {
         id: OrderedProductId("test1"),
         productType: ProductType.Newspaper,
@@ -103,7 +103,7 @@ describe("unclassified Taxable Product", () => {
       const actual = isFoodAndBeverage(product);
       expect(actual).toBe(false);
     });
-    it("飲食料品でない場合falseを返す", () => {
+    it("注文商品が飲食料品でない場合falseを返す", () => {
       const product = {
         id: OrderedProductId("test1"),
         productType: ProductType.Newspaper,
