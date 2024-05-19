@@ -14,6 +14,9 @@ export type OrderedProduct = {
   price: ProductPrice,
 }
 
+/**
+ * 注文商品リスト
+ */
 export type OrderedProducts = OrderedProduct[];
 export function OrderedProducts(products: OrderedProducts): OrderedProducts {
   if (products.length === 0 || products.length > 10000) {

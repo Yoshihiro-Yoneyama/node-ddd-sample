@@ -104,7 +104,7 @@ export function translateToUnclassifiedProduct(orderedProducts: OrderedProducts)
 }
 
 /**
- * 一体資産の商品の組を作成する関数
+ * 一体資産として扱う商品の組のリストを作成する関数
  */
 function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProducts): OrderedProducts[] {
   return pipe(
@@ -115,7 +115,7 @@ function createUnclassifiedIntegratedAssetBundle(orderedProducts: OrderedProduct
 }
 
 /**
- * 一体資産を作成する関数
+ * 一体資産のリストを作成する関数
  */
 function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): UnclassifiedIntegratedAsset[] {
   return pair.map(([a, b]) => {
@@ -133,7 +133,7 @@ function createUnclassifiedIntegratedAsset(pair: OrderedProducts[]): Unclassifie
 }
 
 /**
- * 一体資産として扱わなかった商品を作成する関数
+ * 一体資産として扱わなかった単体商品のリストを作成する関数
  */
 function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orderedProductsForIntegratedAsset: OrderedProducts[]): UnclassifiedSingleProduct[] {
   const orderedProductsFromIntegratedAsset = orderedProductsForIntegratedAsset.flat();
