@@ -4,7 +4,7 @@ import {TaxableProductAndTaxRate, TaxableProductPrice, TaxableProductType} from 
 
 describe('CalculateTotalWithTax', () => {
   describe('calculateTotalWithTax', () => {
-    it('課税商品の一覧から税込合計金額を算出する', () => {
+    it('税率別の商品と税率の組のリストから税込合計金額を算出する', () => {
       const taxableProductAndTaxRateList: TaxableProductAndTaxRate[]= [
         [
           {
