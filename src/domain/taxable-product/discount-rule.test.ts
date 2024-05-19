@@ -9,9 +9,9 @@ import {
 } from "../ordered-product/ordered-product";
 import {applyDiscountRule} from "./discount-rule";
 
-describe('Discount Rule Tests', () => {
-  describe('applyDiscountRule', () => {
-    it('課税商品の一覧が値引き対象だったらIsEligibleForDiscountがTrueのオブジェクトを返却する', () => {
+describe("Discount Rule Tests", () => {
+  describe("applyDiscountRule", () => {
+    it("注文商品リストが値引き対象だったら税込合計金額から10%値引きした金額を返す", () => {
       const orderedProducts: OrderedProducts = [
         {
           id: OrderedProductId("test"),
@@ -36,7 +36,7 @@ describe('Discount Rule Tests', () => {
       expect(actual).toBe(450);
     });
 
-    it('課税商品の一覧が値引き対象でなかったらIsEligibleForDiscountがFalseのオブジェクトを返却する', () => {
+    it("注文商品リストが値引き対象でなければ税込合計金額を返す", () => {
       const orderedProducts: OrderedProducts = [
         {
           id: OrderedProductId("test"),

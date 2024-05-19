@@ -70,7 +70,7 @@ export type DeliveryTo = typeof DeliveryTo[keyof typeof DeliveryTo];
 
 export type ProductPrice = Brand<number, "ProductPrice">;
 export function ProductPrice(value: number): ProductPrice {
-  if (value <= 0 || value >= 99999) {
+  if (value < 0 || value > 99999) {
     throw new Error("金額は0〜99999の整数で入力してください。")
   }
   return value as ProductPrice;

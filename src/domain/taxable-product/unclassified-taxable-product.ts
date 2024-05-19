@@ -63,6 +63,25 @@ export function SingleProductPrice(value: number): SingleProductPrice {
 }
 
 /**
+ * 飲食料品かの判定を行う関数
+ */
+export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
+  return pipe(
+    !product.isOralProduct ? option.some(false) : option.none,
+    option.alt(() => EXCLUDED_TYPES.includes(product.productType) ? option.some(false) : option.none),
+    option.alt(() => product.serviceType !== ServiceType.TakeOut ? option.some(false) : option.none),
+    option.alt(() => product.deliveryMethod === DeliveryMethod.Catering &&
+      product.deliveryTo !== DeliveryTo.NursingHome
+        ? option.some(false)
+        : option.none
+    ),
+    option.map((value) => IsFoodAndBeverage(value)),
+    option.getOrElse(() => IsFoodAndBeverage(true))
+  )
+}
+const EXCLUDED_TYPES: ProductType[] = [ProductType.Alcohol, ProductType.QuasiDrug, ProductType.Medicine];
+
+/**
  * 注文商品リストから税率未分類の商品リストを作成する関数
  *
  * @remarks
@@ -130,22 +149,3 @@ function extractUnclassifiedSingleProduct(orderedProducts: OrderedProducts, orde
       }
     });
 }
-
-/**
- * 飲食料品かの判定を行う関数
- */
-export function isFoodAndBeverage(product: OrderedProduct): IsFoodAndBeverage {
-  return pipe(
-    !product.isOralProduct ? option.some(false) : option.none,
-    option.alt(() => EXCLUDED_TYPES.includes(product.productType) ? option.some(false) : option.none),
-    option.alt(() => product.serviceType !== ServiceType.TakeOut ? option.some(false) : option.none),
-    option.alt(() => product.deliveryMethod === DeliveryMethod.Catering &&
-      product.deliveryTo !== DeliveryTo.NursingHome
-        ? option.some(false)
-        : option.none
-    ),
-    option.map((value) => IsFoodAndBeverage(value)),
-    option.getOrElse(() => IsFoodAndBeverage(true))
-  )
-}
-const EXCLUDED_TYPES: ProductType[] = [ProductType.Alcohol, ProductType.QuasiDrug, ProductType.Medicine];

@@ -28,6 +28,32 @@ describe("unclassified Taxable Product", () => {
     });
   });
 
+  describe("NonOralProductPrice", () => {
+    it("NonOralProductPriceの0未満の場合エラーを返す", () => {
+      expect(() => NonOralProductPrice(-1)).toThrowError("金額は0〜99999の整数で入力してください。");
+    });
+    it("NonOralProductPriceの99999より大きい場合エラーを返す", () => {
+      expect(() => NonOralProductPrice(100000)).toThrowError("金額は0〜99999の整数で入力してください。");
+    });
+    it.each([0, 99999])("NonOralProductPriceを生成する", (price) => {
+      const actual = NonOralProductPrice(price);
+      expect(actual).toBe(price);
+    });
+  });
+
+  describe("SingleProductPrice", () => {
+    it("SingleProductPriceの0未満の場合エラーを返す", () => {
+      expect(() => SingleProductPrice(-1)).toThrowError("金額は0〜99999の整数で入力してください。");
+    });
+    it("SingleProductPriceの99999より大きい場合エラーを返す", () => {
+      expect(() => SingleProductPrice(100000)).toThrowError("金額は0〜99999の整数で入力してください。");
+    });
+    it.each([0, 99999])("SingleProductPriceを生成する", (price) => {
+      const actual = SingleProductPrice(price);
+      expect(actual).toBe(price);
+    });
+  });
+
   describe("translateToUnclassifiedProduct", () => {
     it("注文商品リストを税率未分類の商品リストに変換する", () => {
       const orderedProducts = [

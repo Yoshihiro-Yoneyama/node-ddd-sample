@@ -2,15 +2,12 @@ import {OrderedProducts, ProductType} from "../ordered-product/ordered-product";
 import {isFoodAndBeverage} from "./unclassified-taxable-product";
 
 /**
- * 商品リストに割引ルールを適用する関数を返す
+ * 注文商品リストから割引ルールを適用する関数を返す
  *
  * @remarks
  * 割引ルールの適用条件は飲食料品と新聞の税抜合計金額と \
  * その他の商品の税抜合計金額の比がちょうど2：3の場合である \
  * この条件を満たす場合、最終的な税込合計金額から10%の値引きを行う関数を返す。 \
- *
- * @param orderedProducts
- * @returns 最終的な合計金額
  */
 export function applyDiscountRule(orderedProducts: OrderedProducts): (totalWithTax: number) => number {
   const foodAndBeverageAndNewsPaperTotal = orderedProducts
