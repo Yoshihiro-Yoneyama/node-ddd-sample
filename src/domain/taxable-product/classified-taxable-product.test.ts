@@ -85,6 +85,30 @@ describe('classified Taxable Product', () => {
           }
         },
         {
+          type: "UnclassifiedIntegratedAsset",
+          oralProduct: {
+            price: OralProductPrice(100),
+            isFoodAndBeverage: IsFoodAndBeverage(false),
+          },
+          nonOralProduct: {
+            price: NonOralProductPrice(200),
+          }
+        },
+        {
+          type: "UnclassifiedSingleProduct",
+          productType: ProductType.Newspaper,
+          singleProductPrice: SingleProductPrice(300),
+          isOralProduct: IsOralProduct(false),
+          isFoodAndBeverage: IsFoodAndBeverage(false),
+        },
+        {
+          type: "UnclassifiedSingleProduct",
+          productType: ProductType.Food,
+          singleProductPrice: SingleProductPrice(300),
+          isOralProduct: IsOralProduct(true),
+          isFoodAndBeverage: IsFoodAndBeverage(true),
+        },
+        {
           type: "UnclassifiedSingleProduct",
           productType: ProductType.Book,
           singleProductPrice: SingleProductPrice(200),
@@ -98,6 +122,18 @@ describe('classified Taxable Product', () => {
         {
           type: TaxableProductType.ReducedTaxRateIntegratedAsset,
           price: TaxableProductPrice(301)
+        },
+        {
+          type: TaxableProductType.StandardTaxRateIntegratedAsset,
+          price: TaxableProductPrice(300)
+        },
+        {
+          type: TaxableProductType.Newspaper,
+          price: TaxableProductPrice(300)
+        },
+        {
+          type: TaxableProductType.FoodAndBeverage,
+          price: TaxableProductPrice(300)
         },
         {
           type: TaxableProductType.Other,

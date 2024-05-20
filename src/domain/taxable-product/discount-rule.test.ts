@@ -9,7 +9,7 @@ import {
 } from "../ordered-product/ordered-product";
 import {applyDiscountRule} from "./discount-rule";
 
-describe("Discount Rule Tests", () => {
+describe("discount rule", () => {
   describe("applyDiscountRule", () => {
     it("注文商品リストが値引き対象だったら税込合計金額から10%値引きした金額を返す", () => {
       const orderedProducts: OrderedProducts = [
